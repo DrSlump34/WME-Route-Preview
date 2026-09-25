@@ -1,6 +1,6 @@
 # WME Route Preview (WRP)
 
-<img src="icon.svg" width="96" align="right" alt="">
+<img src="icon-128.png" width="96" align="right" alt="">
 
 Voir, dans WME, un trajet **tel que l'appli Waze le donnera au conducteur** : chaque instruction comme dans la liste de l'appli — écussons, panneaux de sortie, voies, ronds-points — et **chaque annonce vocale dite par la vraie voix de Waze**, y compris les instructions personnalisées posées par les éditeurs.
 

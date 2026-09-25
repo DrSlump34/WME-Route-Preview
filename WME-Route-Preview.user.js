@@ -1,9 +1,9 @@
 // ==UserScript==
 // @name         WME Route Preview
 // @name:fr      WME Route Preview
-// @icon         data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHdpZHRoPSc2NCcgaGVpZ2h0PSc2NCcgdmlld0JveD0nMCAwIDY0IDY0Jz48ZGVmcz48bGluZWFyR3JhZGllbnQgaWQ9J2cnIHgxPScwJyB5MT0nMCcgeDI9JzEnIHkyPScxJz48c3RvcCBvZmZzZXQ9JzAnIHN0b3AtY29sb3I9JyMxZTg4ZTUnLz48c3RvcCBvZmZzZXQ9JzEnIHN0b3AtY29sb3I9JyMxNTY1YzAnLz48L2xpbmVhckdyYWRpZW50PjwvZGVmcz48cmVjdCB3aWR0aD0nNjQnIGhlaWdodD0nNjQnIHJ4PScxNCcgZmlsbD0ndXJsKCNnKScvPjxwYXRoIGQ9J00xMiA1MiBWMzYgUTEyIDI4IDIwIDI4IEgzMiBRNDAgMjggNDAgMjAgVjE0JyBmaWxsPSdub25lJyBzdHJva2U9JyNmZmYnIHN0cm9rZS13aWR0aD0nNScgc3Ryb2tlLWxpbmVjYXA9J3JvdW5kJyBzdHJva2UtbGluZWpvaW49J3JvdW5kJy8+PGNpcmNsZSBjeD0nMTInIGN5PSc1Micgcj0nNScgZmlsbD0nI2ZmZicvPjxwYXRoIGQ9J00zMyAxNiBMNDAgNiBMNDcgMTYgWicgZmlsbD0nI2ZmZicvPjxwYXRoIGQ9J00zNiA0MiBINDEgTDQ3IDM3IFY1NSBMNDEgNTAgSDM2IFonIGZpbGw9JyNmYjhjMDAnLz48cGF0aCBkPSdNNTEgNDEgUTU1IDQ2IDUxIDUxJyBmaWxsPSdub25lJyBzdHJva2U9JyNmYjhjMDAnIHN0cm9rZS13aWR0aD0nMi41JyBzdHJva2UtbGluZWNhcD0ncm91bmQnLz48L3N2Zz4K
+// @icon         data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHdpZHRoPSc2NCcgaGVpZ2h0PSc2NCcgdmlld0JveD0nMCAwIDY0IDY0Jz48ZGVmcz48bGluZWFyR3JhZGllbnQgaWQ9J2cnIHgxPScwJyB5MT0nMCcgeDI9JzAnIHkyPScxJz48c3RvcCBvZmZzZXQ9JzAnIHN0b3AtY29sb3I9JyMxZTliZjAnLz48c3RvcCBvZmZzZXQ9JzEnIHN0b3AtY29sb3I9JyMxNTY1YzAnLz48L2xpbmVhckdyYWRpZW50PjwvZGVmcz48cmVjdCB3aWR0aD0nNjQnIGhlaWdodD0nNjQnIHJ4PScxNCcgZmlsbD0ndXJsKCNnKScvPjxwYXRoIGQ9J00xNSA1NSBWMzQgUTE1IDI1IDI0IDI1IEgzMScgZmlsbD0nbm9uZScgc3Ryb2tlPScjZmZmJyBzdHJva2Utd2lkdGg9JzknIHN0cm9rZS1saW5lY2FwPSdyb3VuZCcgc3Ryb2tlLWxpbmVqb2luPSdyb3VuZCcvPjxwYXRoIGQ9J00yOSAxMyBMNDMgMjUgTDI5IDM3IFonIGZpbGw9JyNmZmYnIHN0cm9rZT0nI2ZmZicgc3Ryb2tlLXdpZHRoPSczJyBzdHJva2UtbGluZWpvaW49J3JvdW5kJy8+PHBhdGggZD0nTTM3IDQ3IEg0MiBMNTAgNDAgVjYwIEw0MiA1MyBIMzcgWicgZmlsbD0nI2ZiOGMwMCcgc3Ryb2tlPScjZmI4YzAwJyBzdHJva2Utd2lkdGg9JzEuNScgc3Ryb2tlLWxpbmVqb2luPSdyb3VuZCcvPjxwYXRoIGQ9J001NCA0NCBRNTcuNSA1MCA1NCA1NicgZmlsbD0nbm9uZScgc3Ryb2tlPScjZmI4YzAwJyBzdHJva2Utd2lkdGg9JzMnIHN0cm9rZS1saW5lY2FwPSdyb3VuZCcvPjwvc3ZnPgo=
 // @namespace    https://github.com/DrSlump34
-// @version      0.14.02
+// @version      0.14.03
 // @description  Preview a route in WME the way the Waze app gives it: set a start and a finish (segment, place, search or pointer), then read every instruction as in the app list — road shields, exit signs, lanes, roundabouts — and hear every voice prompt spoken by the real Waze voice, including the custom turn guidance set by editors. Route options as in the app (time, vehicle, avoidances, passes). The script never changes the map.
 // @description:fr Prévisualiser un trajet dans WME comme l'appli Waze le donne : posez un départ et une arrivée (segment, lieu, recherche ou pointeur), puis lisez chaque instruction comme dans la liste de l'appli — écussons, panneaux de sortie, voies, ronds-points — et écoutez chaque annonce dite par la vraie voix de Waze, y compris les instructions personnalisées posées par les éditeurs. Options du calcul comme dans l'appli (heure, véhicule, évitements, pass). Le script ne modifie jamais la carte.
 // @author       DrSlump34
@@ -11,6 +11,8 @@
 // @license      MIT
 // @homepageURL  https://github.com/DrSlump34/WME-Route-Preview
 // @supportURL   https://github.com/DrSlump34/WME-Route-Preview/issues
+// @downloadURL  https://update.greasyfork.org/scripts/597359/WME%20Route%20Preview.user.js
+// @updateURL    https://update.greasyfork.org/scripts/597359/WME%20Route%20Preview.meta.js
 // @match        https://www.waze.com/*/editor*
 // @match        https://www.waze.com/editor*
 // @match        https://beta.waze.com/*/editor*
@@ -1487,6 +1489,7 @@
 #wrp-pane kbd { display: inline-block; background: #f5f7f9; color: #2d3748; border: 1px solid #dde3ea; border-bottom-width: 2px; border-radius: 3px;
     padding: 0 4px; font-family: ui-monospace,Menlo,Consolas,monospace; font-size: 10px; line-height: 1.5; }
 .wrp-sb-foot { margin-top: 12px; padding-top: 10px; border-top: 1px solid #dde3ea; font-size: 11px; color: #9e9e9e; line-height: 1.6; }
+.wrp-sb-foot a { color: #1565c0; }
 
 /* Ligne TRAJET du panneau d'un segment ou d'un lieu. */
 #wrp-bar { display: flex; align-items: center; gap: 4px; padding: 4px 16px 6px; font-family: 'Rubik','Open Sans',sans-serif; font-size: 12px; color: #2d3748; }
@@ -1577,7 +1580,8 @@ button.wrp-drapeau:hover { background: #eef4fb; border-color: #2196f3; }
             '<div class="wrp-sec">&#x2753; ' + esc(t('sbHelp')) + '</div>' +
             aide.map((x, i) => '<div class="wrp-help-section"><button type="button" class="wrp-help-hdr' + (i ? '' : ' on') + '" data-aide="' + i + '" aria-expanded="' + !i + '">' +
                 esc(x.t) + ' <span>' + (i ? '&#x25B6;' : '&#x25BC;') + '</span></button><div class="wrp-help-body" data-corps="' + i + '"' + (i ? ' hidden' : '') + '>' + x.b + '</div></div>').join('') +
-            '<p class="wrp-sb-foot">&#x1F512; ' + esc(t('sbSafe')) + '</p></div>';
+            '<p class="wrp-sb-foot">&#x1F512; ' + esc(t('sbSafe')) + '<br>&#x1F517; <a href="' + URL_GF + '" target="_blank" rel="noopener">GreasyFork</a>' +
+            ' &nbsp;&#xB7;&nbsp; <a href="' + URL_GH + '" target="_blank" rel="noopener">GitHub</a></p></div>';
     }
 
     function brancherOnglet() {
@@ -1612,9 +1616,11 @@ button.wrp-drapeau:hover { background: #eef4fb; border-color: #2196f3; }
     //  tourne ; hors ligne, réponse illisible ou page absente (le dépôt n'est pas encore publié) : elle
     //  reste éteinte. Un clic ouvre le fichier : le gestionnaire de scripts propose la mise à jour.
 
-    // Installé depuis GreasyFork, le gestionnaire de scripts connaît l'adresse de mise à jour (le .meta.js, quelques
-    // centaines d'octets) et celle du script : GreasyFork les inscrit lui-même dans le fichier qu'il sert. Installé
-    // autrement, on se rabat sur le fichier du dépôt GitHub.
+    // Le gestionnaire de scripts connaît l'adresse de mise à jour (le .meta.js de GreasyFork, quelques centaines
+    // d'octets) et celle du script : l'en-tête les déclare depuis 0.14.03. Sans elles (copie collée à la main), on
+    // se rabat sur le fichier du dépôt GitHub.
+    const URL_GF = 'https://greasyfork.org/scripts/597359-wme-route-preview';
+    const URL_GH = 'https://github.com/DrSlump34/WME-Route-Preview';
     const URL_DEPOT = 'https://raw.githubusercontent.com/DrSlump34/WME-Route-Preview/master/WME-Route-Preview.user.js';
     const gmScript = () => (typeof GM_info !== 'undefined' && GM_info.script) || {};
     const URL_MAJ = gmScript().updateURL || URL_DEPOT;
@@ -1841,9 +1847,10 @@ button.wrp-drapeau:hover { background: #eef4fb; border-color: #2196f3; }
     // de la fenêtre (demande de l'auteur).
     function iconeScript(h) { return FAB_ICONE.replace(/width="22" height="22"/, 'width="' + h + '" height="' + h + '"'); }
     const FAB_ICONE = '<svg width="22" height="22" viewBox="0 0 64 64" aria-hidden="true">' +
-        '<path d="M12 52 V36 Q12 28 20 28 H32 Q40 28 40 20 V14" fill="none" stroke="#1565c0" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round"/>' +
-        '<circle cx="12" cy="52" r="5.5" fill="#1565c0"/><path d="M32 17 L40 5 L48 17 Z" fill="#1565c0"/>' +
-        '<path d="M38 42 H43 L49 37 V55 L43 50 H38 Z" fill="#fb8c00"/><path d="M53 41 Q57 46 53 51" fill="none" stroke="#fb8c00" stroke-width="2.5" stroke-linecap="round"/></svg>';
+        // Le dessin de l'illustration (icon.png) réduit à deux formes : la flèche de virage et le haut-parleur.
+        '<path d="M15 55 V34 Q15 25 24 25 H31" fill="none" stroke="#1565c0" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/>' +
+        '<path d="M29 13 L43 25 L29 37 Z" fill="#1565c0" stroke="#1565c0" stroke-width="3" stroke-linejoin="round"/>' +
+        '<path d="M37 47 H42 L50 40 V60 L42 53 H37 Z" fill="#fb8c00" stroke="#fb8c00" stroke-width="1.5" stroke-linejoin="round"/><path d="M54 44 Q57.5 50 54 56" fill="none" stroke="#fb8c00" stroke-width="3" stroke-linecap="round"/></svg>';
 
     // Le bouton vit dans la colonne native de WME, où WCT et WNA ont le leur. ⚠️ Il ne réclame
     // AUCUNE place : WCT se remet en dernière position dès qu'un bouton passe après lui ; exiger

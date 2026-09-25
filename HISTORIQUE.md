@@ -1,5 +1,11 @@
 # WME Route Preview — historique des versions
 
+## 0.14.03
+
+- Nouvelle icône, tirée de l'illustration du projet : flèche de virage et haut-parleur (bouton de la carte, onglet, fenêtre, gestionnaire de scripts).
+- Mise à jour automatique par GreasyFork déclarée dans l'en-tête (`@downloadURL`, `@updateURL`), y compris pour une copie installée autrement.
+- Liens GreasyFork et GitHub au pied de l'onglet Scripts.
+
 ## 0.14.02 — première publication
 
 - Publication sur GitHub et GreasyFork : liens vers la page du projet et les Issues ; la détection de nouvelle version suit l'adresse de mise à jour du gestionnaire de scripts (le .meta.js de GreasyFork).

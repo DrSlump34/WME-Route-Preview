@@ -10,7 +10,7 @@ import os, shutil, sys, glob
 ICI = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 PUB = os.path.join(os.path.dirname(ICI), 'WME-Route-Preview-publication')
 
-FICHIERS = ['WME-Route-Preview.user.js', 'README.md', 'HISTORIQUE.md', 'LICENSE', 'icon.svg', '.gitattributes',
+FICHIERS = ['WME-Route-Preview.user.js', 'README.md', 'HISTORIQUE.md', 'LICENSE', 'icon.svg', 'ICON.png', 'icon-512.png', 'icon-256.png', 'icon-128.png', 'icon-64.png', '.gitattributes',
             'tools/check-idents.js', 'tools/rejouer-bancs.js', 'tools/publier.py',
             'docs/options-calcul-livemap.md', 'docs/opcodes-wme-2026-09-25.json', 'bancs/LISEZMOI.md']
 BANCS = ['trajet_montpellier_lattes.json', 'trajet_rond-point_D26_Donzere.json', 'trajet_bollene_A7_sortie19.json',
