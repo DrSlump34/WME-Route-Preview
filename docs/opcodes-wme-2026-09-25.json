@@ -1,0 +1,110 @@
+{
+ "en": {
+  "CONTINUE": "Continue",
+  "EXIT_LEFT": "Exit left",
+  "EXIT_RIGHT": "Exit right",
+  "KEEP_LEFT": "Keep left",
+  "KEEP_RIGHT": "Keep right",
+  "NONE": "None",
+  "ROUNDABOUT_ENTER": "Let Waze count the exit number",
+  "TURN_LEFT": "Turn left",
+  "TURN_RIGHT": "Turn right",
+  "UTURN": "U-turn"
+ },
+ "fr": {
+  "CONTINUE": "Continuez tout droit",
+  "EXIT_LEFT": "Sortez à gauche",
+  "EXIT_RIGHT": "Sortez à droite",
+  "KEEP_LEFT": "Serrez à gauche",
+  "KEEP_RIGHT": "Serrez à droite",
+  "NONE": "Aucune",
+  "ROUNDABOUT_ENTER": "Laisser Waze calculer le numéro de sortie",
+  "TURN_LEFT": "Tournez à gauche",
+  "TURN_RIGHT": "Tournez à droite",
+  "UTURN": "Demi-tour"
+ },
+ "de": {
+  "CONTINUE": "Weiter geradeaus",
+  "EXIT_LEFT": "Nimm die Ausfahrt links",
+  "EXIT_RIGHT": "Nimm die Ausfahrt rechts",
+  "KEEP_LEFT": "Links halten",
+  "KEEP_RIGHT": "Rechts halten",
+  "NONE": "Ohne",
+  "ROUNDABOUT_ENTER": "Lass Waze die Ausfahrten zählen",
+  "TURN_LEFT": "Biege links ab",
+  "TURN_RIGHT": "Biege rechts ab",
+  "UTURN": "Wenden"
+ },
+ "es": {
+  "CONTINUE": "Continuar",
+  "EXIT_LEFT": "Sal a la izquierda",
+  "EXIT_RIGHT": "Sal a la derecha",
+  "KEEP_LEFT": "Mantente a la izquierda",
+  "KEEP_RIGHT": "Mantente a la derecha",
+  "NONE": "Ninguno",
+  "ROUNDABOUT_ENTER": "Deja que Waze cuente el número de salida.",
+  "TURN_LEFT": "Gira a la izquierda",
+  "TURN_RIGHT": "Gira a la derecha",
+  "UTURN": "Cambio de sentido a la izquierda"
+ },
+ "it": {
+  "CONTINUE": "Continua",
+  "EXIT_LEFT": "Uscire a sinistra",
+  "EXIT_RIGHT": "Uscire a destra",
+  "KEEP_LEFT": "Tenersi a sinistra",
+  "KEEP_RIGHT": "Tenersi a destra",
+  "NONE": "Nessuna",
+  "ROUNDABOUT_ENTER": "Lascia che Waze conti le uscite",
+  "TURN_LEFT": "Svoltare a sinistra",
+  "TURN_RIGHT": "Svoltare a destra",
+  "UTURN": "Inversione a U"
+ },
+ "pt-BR": {
+  "CONTINUE": "Siga em frente",
+  "EXIT_LEFT": "Saia à esquerda",
+  "EXIT_RIGHT": "Saia à direita",
+  "KEEP_LEFT": "Mantenha-se à esquerda",
+  "KEEP_RIGHT": "Mantenha-se à direita",
+  "NONE": "Nenhum",
+  "ROUNDABOUT_ENTER": "Indicar o número da saída",
+  "TURN_LEFT": "Vire à esquerda",
+  "TURN_RIGHT": "Vire à direita",
+  "UTURN": "Retorne"
+ },
+ "pt-PT": {
+  "CONTINUE": "Continue",
+  "EXIT_LEFT": "Saia à esquerda",
+  "EXIT_RIGHT": "Saia à direita",
+  "KEEP_LEFT": "Mantenha-se à esquerda",
+  "KEEP_RIGHT": "Mantenha-se à direita",
+  "NONE": "'Nenhuma'",
+  "ROUNDABOUT_ENTER": "'Indicar o n.º da saída'",
+  "TURN_LEFT": "Vire à esquerda",
+  "TURN_RIGHT": "Vire à direita",
+  "UTURN": "Faça inversão de marcha"
+ },
+ "nl": {
+  "CONTINUE": "Ga rechtdoor",
+  "EXIT_LEFT": "Afrit links",
+  "EXIT_RIGHT": "Afrit rechts",
+  "KEEP_LEFT": "Links aanhouden",
+  "KEEP_RIGHT": "Rechts aanhouden",
+  "NONE": "Geen",
+  "ROUNDABOUT_ENTER": "Laat Waze het afslag-nummer geven",
+  "TURN_LEFT": "Links afslaan",
+  "TURN_RIGHT": "Rechts afslaan",
+  "UTURN": "Omkeren"
+ },
+ "he": {
+  "CONTINUE": "המשך",
+  "EXIT_LEFT": "צא שמאלה",
+  "EXIT_RIGHT": "צא ימינה",
+  "KEEP_LEFT": "להיצמד לשמאל",
+  "KEEP_RIGHT": "להיצמד לימין",
+  "NONE": "ללא",
+  "ROUNDABOUT_ENTER": "אפשר ל Waze לספור את היציאות",
+  "TURN_LEFT": "פנה שמאלה",
+  "TURN_RIGHT": "פנה ימינה",
+  "UTURN": "פניית פרסה"
+ }
+}

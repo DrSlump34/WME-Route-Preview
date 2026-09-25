@@ -1,0 +1,123 @@
+{
+ "metres": 5757,
+ "duree": "8 min",
+ "manoeuvres": [
+  {
+   "n": 1,
+   "op": "ROUNDABOUT_ENTER",
+   "arg": 2,
+   "troncon": "471 m",
+   "rue": "Saxon St (S)",
+   "l1": "Saxon St (S)",
+   "l2": "",
+   "sorties": "",
+   "annonces": [
+    "400 m : Dans 400 mètres, au rond-point, prenez la deuxième sortie sur Saxon St (S)",
+    "200 m : Dans 200 mètres, au rond-point, prenez la deuxième sortie sur Saxon St (S)",
+    "final : Au rond-point, prenez la deuxième sortie sur Saxon St (S)"
+   ]
+  },
+  {
+   "n": 2,
+   "op": "ROUNDABOUT_ENTER",
+   "arg": 2,
+   "troncon": "913 m",
+   "rue": "Saxon St",
+   "l1": "Saxon St",
+   "l2": "",
+   "sorties": "",
+   "annonces": [
+    "400 m : Dans 400 mètres, au rond-point, prenez la deuxième sortie sur Saxon St",
+    "200 m : Dans 200 mètres, au rond-point, prenez la deuxième sortie sur Saxon St",
+    "final : Au rond-point, prenez la deuxième sortie sur Saxon St"
+   ]
+  },
+  {
+   "n": 3,
+   "op": "ROUNDABOUT_ENTER",
+   "arg": 2,
+   "troncon": "1.2 km",
+   "rue": "B4034 - Saxon St",
+   "l1": "[B4034] Aylesbury Ashland, West Ashland",
+   "l2": "",
+   "sorties": "",
+   "annonces": [
+    "400 m : Dans 400 mètres, au rond-point, prenez la deuxième sortie sur B4034 > Aylesbury",
+    "200 m : Dans 200 mètres, au rond-point, prenez la deuxième sortie sur B4034 > Aylesbury",
+    "final : Au rond-point, prenez la deuxième sortie sur B4034 > Aylesbury"
+   ]
+  },
+  {
+   "n": 4,
+   "op": "ROUNDABOUT_ENTER",
+   "arg": 1,
+   "troncon": "860 m",
+   "rue": "Groveway (E)",
+   "l1": "Groveway (E)",
+   "l2": "",
+   "sorties": "",
+   "annonces": [
+    "400 m : Dans 400 mètres, au rond-point, prenez la première sortie sur Groveway (E)",
+    "200 m : Dans 200 mètres, au rond-point, prenez la première sortie sur Groveway (E)",
+    "final : Au rond-point, prenez la première sortie sur Groveway (E)"
+   ]
+  },
+  {
+   "n": 5,
+   "op": "ROUNDABOUT_ENTER",
+   "arg": 2,
+   "troncon": "553 m",
+   "rue": "Groveway (E)",
+   "l1": "Groveway (E)",
+   "l2": "",
+   "sorties": "",
+   "annonces": [
+    "400 m : Dans 400 mètres, au rond-point, prenez la deuxième sortie sur Groveway (E)",
+    "200 m : Dans 200 mètres, au rond-point, prenez la deuxième sortie sur Groveway (E)",
+    "final : Au rond-point, prenez la deuxième sortie sur Groveway (E)"
+   ]
+  },
+  {
+   "n": 6,
+   "op": "ROUNDABOUT_ENTER",
+   "arg": 1,
+   "troncon": "1.2 km",
+   "rue": "Walton Dr",
+   "l1": "Walton Dr",
+   "l2": "",
+   "sorties": "",
+   "annonces": [
+    "400 m : Dans 400 mètres, au rond-point, prenez la première sortie sur Walton Dr, puis tournez à gauche",
+    "200 m : Dans 200 mètres, au rond-point, prenez la première sortie sur Walton Dr, puis tournez à gauche",
+    "final : Au rond-point, prenez la première sortie sur Walton Dr, puis tournez à gauche"
+   ]
+  },
+  {
+   "n": 7,
+   "op": "TURN_LEFT",
+   "arg": 0,
+   "troncon": "369 m",
+   "rue": "Ring Rd W",
+   "l1": "Ring Rd W",
+   "l2": "",
+   "sorties": "",
+   "annonces": [
+    "200 m : Dans 200 mètres, tournez à gauche sur Ring Rd W, puis vous êtes arrivé",
+    "final : Tournez à gauche sur Ring Rd W, puis vous êtes arrivé"
+   ]
+  },
+  {
+   "n": 8,
+   "op": "APPROACHING_DESTINATION",
+   "arg": 0,
+   "troncon": "216 m",
+   "rue": "Ring Rd W",
+   "l1": "",
+   "l2": "",
+   "sorties": "",
+   "annonces": [
+    "final : Vous êtes arrivé"
+   ]
+  }
+ ]
+}

@@ -1,0 +1,296 @@
+{
+ "metres": 8400,
+ "duree": "19 min",
+ "manoeuvres": [
+  {
+   "n": 1,
+   "op": "TURN_LEFT",
+   "arg": 0,
+   "troncon": "91 m",
+   "rue": "Rue Bonnier d'Alco",
+   "l1": "Rue Bonnier d'Alco",
+   "l2": "",
+   "sorties": "",
+   "annonces": [
+    "final : Tournez à gauche sur Rue Bonnier d'Alco, puis tournez à droite"
+   ]
+  },
+  {
+   "n": 2,
+   "op": "TURN_RIGHT",
+   "arg": 0,
+   "troncon": "77 m",
+   "rue": "Rue de l'Université",
+   "l1": "Rue de l'Université",
+   "l2": "",
+   "sorties": "",
+   "annonces": [
+    "final : Tournez à droite sur Rue de l'Université, puis tournez à gauche"
+   ]
+  },
+  {
+   "n": 3,
+   "op": "TURN_LEFT",
+   "arg": 0,
+   "troncon": "347 m",
+   "rue": "Boulevard Louis Blanc",
+   "l1": "Boulevard Louis Blanc",
+   "l2": "",
+   "sorties": "",
+   "annonces": [
+    "200 m : Dans 200 mètres, tournez à gauche sur Boulevard Louis Blanc, puis tournez à droite",
+    "final : Tournez à gauche sur Boulevard Louis Blanc, puis tournez à droite"
+   ]
+  },
+  {
+   "n": 4,
+   "op": "TURN_RIGHT",
+   "arg": 0,
+   "troncon": "15 m",
+   "rue": "Rue Ferdinand Fabre",
+   "l1": "Rue Ferdinand Fabre",
+   "l2": "",
+   "sorties": "",
+   "annonces": [
+    "final : Tournez à droite sur Rue Ferdinand Fabre, puis tournez à droite"
+   ]
+  },
+  {
+   "n": 5,
+   "op": "TURN_RIGHT",
+   "arg": 0,
+   "troncon": "42 m",
+   "rue": "Quai du Verdanson",
+   "l1": "Quai du Verdanson",
+   "l2": "",
+   "sorties": "",
+   "annonces": [
+    "final : Tournez à droite sur Quai du Verdanson"
+   ]
+  },
+  {
+   "n": 6,
+   "op": "CONTINUE",
+   "arg": 0,
+   "troncon": "1.4 km",
+   "rue": "Avenue Jean Mermoz",
+   "l1": "Avenue Jean Mermoz",
+   "l2": "",
+   "sorties": "",
+   "annonces": [
+    "400 m : Dans 400 mètres, continuez tout droit sur Avenue Jean Mermoz, puis tournez à gauche",
+    "200 m : Dans 200 mètres, continuez tout droit sur Avenue Jean Mermoz, puis tournez à gauche",
+    "final : Continuez tout droit sur Avenue Jean Mermoz, puis tournez à gauche"
+   ]
+  },
+  {
+   "n": 7,
+   "op": "TURN_LEFT",
+   "arg": 0,
+   "troncon": "166 m",
+   "rue": "Boulevard de l'Aéroport International",
+   "l1": "Boulevard de l'Aéroport International",
+   "l2": "",
+   "sorties": "",
+   "annonces": [
+    "final : Tournez à gauche sur Boulevard de l'Aéroport International, puis tournez à droite"
+   ]
+  },
+  {
+   "n": 8,
+   "op": "TURN_RIGHT",
+   "arg": 0,
+   "troncon": "407 m",
+   "rue": "Rue de Rhodes",
+   "l1": "Rue de Rhodes",
+   "l2": "",
+   "sorties": "",
+   "annonces": [
+    "400 m : Dans 400 mètres, tournez à droite sur Rue de Rhodes, puis tournez à gauche",
+    "200 m : Dans 200 mètres, tournez à droite sur Rue de Rhodes, puis tournez à gauche",
+    "final : Tournez à droite sur Rue de Rhodes, puis tournez à gauche"
+   ]
+  },
+  {
+   "n": 9,
+   "op": "TURN_LEFT",
+   "arg": 0,
+   "troncon": "86 m",
+   "rue": "Rue de Rhodes",
+   "l1": "Rue de Rhodes",
+   "l2": "",
+   "sorties": "",
+   "annonces": [
+    "final : Tournez à gauche sur Rue de Rhodes, puis tournez à droite"
+   ]
+  },
+  {
+   "n": 10,
+   "op": "TURN_RIGHT",
+   "arg": 0,
+   "troncon": "72 m",
+   "rue": "Rue de Rhodes",
+   "l1": "Rue de Rhodes",
+   "l2": "",
+   "sorties": "",
+   "annonces": [
+    "final : Tournez à droite sur Rue de Rhodes, puis tournez à droite"
+   ]
+  },
+  {
+   "n": 11,
+   "op": "TURN_RIGHT",
+   "arg": 0,
+   "troncon": "12 m",
+   "rue": "Avenue du Pirée",
+   "l1": "Avenue du Pirée",
+   "l2": "",
+   "sorties": "",
+   "annonces": [
+    "final : Tournez à droite sur Avenue du Pirée"
+   ]
+  },
+  {
+   "n": 12,
+   "op": "ROUNDABOUT_ENTER",
+   "arg": 2,
+   "troncon": "527 m",
+   "rue": "Avenue du Pirée",
+   "l1": "Avenue du Pirée",
+   "l2": "",
+   "sorties": "",
+   "annonces": [
+    "400 m : Dans 400 mètres, au rond-point, prenez la deuxième sortie sur Avenue du Pirée",
+    "200 m : Dans 200 mètres, au rond-point, prenez la deuxième sortie sur Avenue du Pirée",
+    "final : Au rond-point, prenez la deuxième sortie sur Avenue du Pirée"
+   ]
+  },
+  {
+   "n": 13,
+   "op": "TURN_LEFT",
+   "arg": 0,
+   "troncon": "1.4 km",
+   "rue": "Avenue de Palavas",
+   "l1": "Avenue de Palavas",
+   "l2": "",
+   "sorties": "",
+   "annonces": [
+    "400 m : Dans 400 mètres, tournez à gauche sur Avenue de Palavas, puis continuez tout droit",
+    "200 m : Dans 200 mètres, tournez à gauche sur Avenue de Palavas, puis continuez tout droit",
+    "final : Tournez à gauche sur Avenue de Palavas, puis continuez tout droit"
+   ]
+  },
+  {
+   "n": 14,
+   "op": "CONTINUE",
+   "arg": 0,
+   "troncon": "339 m",
+   "rue": "Avenue de Palavas",
+   "l1": "Avenue de Palavas",
+   "l2": "",
+   "sorties": "",
+   "annonces": [
+    "200 m : Dans 200 mètres, continuez tout droit sur Avenue de Palavas, puis au rond-point, prenez la troisième sortie",
+    "final : Continuez tout droit sur Avenue de Palavas, puis au rond-point, prenez la troisième sortie"
+   ]
+  },
+  {
+   "n": 15,
+   "op": "ROUNDABOUT_ENTER",
+   "arg": 3,
+   "troncon": "48 m",
+   "rue": "Route de Palavas",
+   "l1": "Route de Palavas",
+   "l2": "",
+   "sorties": "",
+   "annonces": [
+    "final : Au rond-point, prenez la troisième sortie sur Route de Palavas"
+   ]
+  },
+  {
+   "n": 16,
+   "op": "KEEP_RIGHT",
+   "arg": 0,
+   "troncon": "2.1 km",
+   "rue": "M132: Lattes-Centre",
+   "l1": "M132: Lattes-Centre",
+   "l2": "",
+   "sorties": "",
+   "annonces": [
+    "1500 m : Dans 1,5 kilomètre, serrez à droite sur M132: Lattes-Centre, puis serrez à droite",
+    "1000 m : Dans 1 kilomètre, serrez à droite sur M132: Lattes-Centre, puis serrez à droite",
+    "800 m : Dans 800 mètres, serrez à droite sur M132: Lattes-Centre, puis serrez à droite",
+    "400 m : Dans 400 mètres, serrez à droite sur M132: Lattes-Centre, puis serrez à droite",
+    "200 m : Dans 200 mètres, serrez à droite sur M132: Lattes-Centre, puis serrez à droite",
+    "final : Serrez à droite sur M132: Lattes-Centre, puis serrez à droite"
+   ]
+  },
+  {
+   "n": 17,
+   "op": "KEEP_RIGHT",
+   "arg": 0,
+   "troncon": "261 m",
+   "rue": "> Lattes-Centre",
+   "l1": "> Lattes-Centre",
+   "l2": "",
+   "sorties": "",
+   "annonces": [
+    "200 m : Dans 200 mètres, serrez à droite sur > Lattes-Centre, puis serrez à droite",
+    "final : Serrez à droite sur > Lattes-Centre, puis serrez à droite"
+   ]
+  },
+  {
+   "n": 18,
+   "op": "KEEP_RIGHT",
+   "arg": 0,
+   "troncon": "340 m",
+   "rue": "",
+   "l1": "",
+   "l2": "",
+   "sorties": "",
+   "annonces": [
+    "200 m : Dans 200 mètres, serrez à droite, puis au rond-point, prenez la première sortie",
+    "final : Serrez à droite, puis au rond-point, prenez la première sortie"
+   ]
+  },
+  {
+   "n": 19,
+   "op": "ROUNDABOUT_ENTER",
+   "arg": 1,
+   "troncon": "68 m",
+   "rue": "Avenue de Montpellier",
+   "l1": "Avenue de Montpellier",
+   "l2": "",
+   "sorties": "",
+   "annonces": [
+    "final : Au rond-point, prenez la première sortie sur Avenue de Montpellier, puis au rond-point, prenez la deuxième sortie"
+   ]
+  },
+  {
+   "n": 20,
+   "op": "ROUNDABOUT_ENTER",
+   "arg": 2,
+   "troncon": "173 m",
+   "rue": "Rue des Jonquilles",
+   "l1": "Rue des Jonquilles",
+   "l2": "",
+   "sorties": "",
+   "annonces": [
+    "final : Au rond-point, prenez la deuxième sortie sur Rue des Jonquilles, puis vous êtes arrivé"
+   ]
+  },
+  {
+   "n": 21,
+   "op": "APPROACHING_DESTINATION",
+   "arg": 0,
+   "troncon": "431 m",
+   "rue": "Rue des Jonquilles",
+   "l1": "",
+   "l2": "",
+   "sorties": "",
+   "annonces": [
+    "final : Vous êtes arrivé"
+   ]
+  }
+ ]
+}

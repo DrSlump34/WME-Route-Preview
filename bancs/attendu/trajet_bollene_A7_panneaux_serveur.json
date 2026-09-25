@@ -1,0 +1,186 @@
+{
+ "metres": 29881,
+ "duree": "24 min",
+ "manoeuvres": [
+  {
+   "n": 1,
+   "op": "TURN_LEFT",
+   "arg": 0,
+   "troncon": "212 m",
+   "rue": "Rue Alphonse Daudet",
+   "l1": "Rue Alphonse Daudet",
+   "l2": "",
+   "sorties": "",
+   "annonces": [
+    "200 m : Dans 200 mètres, tournez à gauche sur Rue Alphonse Daudet, puis au rond-point, prenez la première sortie",
+    "final : Tournez à gauche sur Rue Alphonse Daudet, puis au rond-point, prenez la première sortie"
+   ]
+  },
+  {
+   "n": 2,
+   "op": "ROUNDABOUT_ENTER",
+   "arg": 1,
+   "troncon": "56 m",
+   "rue": "Avenue Jean Giono",
+   "l1": "Avenue Jean Giono",
+   "l2": "",
+   "sorties": "",
+   "annonces": [
+    "final : Au rond-point, prenez la première sortie sur Avenue Jean Giono, puis au rond-point, prenez la deuxième sortie"
+   ]
+  },
+  {
+   "n": 3,
+   "op": "ROUNDABOUT_ENTER",
+   "arg": 2,
+   "troncon": "152 m",
+   "rue": "Avenue Jean Giono",
+   "l1": "Avenue Jean Giono",
+   "l2": "",
+   "sorties": "",
+   "annonces": [
+    "final : Au rond-point, prenez la deuxième sortie sur Avenue Jean Giono, puis au rond-point, prenez la quatrième sortie"
+   ]
+  },
+  {
+   "n": 4,
+   "op": "ROUNDABOUT_ENTER",
+   "arg": 4,
+   "troncon": "174 m",
+   "rue": "",
+   "l1": "[A7] Lyon",
+   "l2": "",
+   "sorties": "[19]",
+   "annonces": [
+    "final : Au rond-point, prenez la quatrième sortie sur A7: Lyon"
+   ]
+  },
+  {
+   "n": 5,
+   "op": "KEEP_RIGHT",
+   "arg": 0,
+   "troncon": "715 m",
+   "rue": "A7: Lyon",
+   "l1": "[E15] [A7] Lyon",
+   "l2": "",
+   "sorties": "",
+   "annonces": [
+    "400 m : Dans 400 mètres, serrez à droite sur A7: Lyon",
+    "200 m : Dans 200 mètres, serrez à droite sur A7: Lyon",
+    "final : Serrez à droite sur A7: Lyon"
+   ]
+  },
+  {
+   "n": 6,
+   "op": "EXIT_RIGHT",
+   "arg": 0,
+   "troncon": "21 km",
+   "rue": "Sortie 18: Le Puy-en-Velay",
+   "l1": "Sortie 18: Le Puy-en-Velay",
+   "l2": "Le Puy-en-Velay",
+   "sorties": "[18]",
+   "annonces": [
+    "1500 m : Dans 1,5 kilomètre, sortez à droite sur Sortie 18: Le Puy-en-Velay",
+    "1000 m : Dans 1 kilomètre, sortez à droite sur Sortie 18: Le Puy-en-Velay",
+    "800 m : Dans 800 mètres, sortez à droite sur Sortie 18: Le Puy-en-Velay",
+    "400 m : Dans 400 mètres, sortez à droite sur Sortie 18: Le Puy-en-Velay",
+    "200 m : Dans 200 mètres, sortez à droite sur Sortie 18: Le Puy-en-Velay",
+    "final : Sortez à droite sur Sortie 18: Le Puy-en-Velay"
+   ]
+  },
+  {
+   "n": 7,
+   "op": "ROUNDABOUT_ENTER",
+   "arg": 2,
+   "troncon": "1.0 km",
+   "rue": "N7",
+   "l1": "[N7] Gap",
+   "l2": "",
+   "sorties": "",
+   "annonces": [
+    "1000 m : Dans 1 kilomètre, au rond-point, prenez la deuxième sortie sur N7: Gap",
+    "800 m : Dans 800 mètres, au rond-point, prenez la deuxième sortie sur N7: Gap",
+    "400 m : Dans 400 mètres, au rond-point, prenez la deuxième sortie sur N7: Gap",
+    "200 m : Dans 200 mètres, au rond-point, prenez la deuxième sortie sur N7: Gap",
+    "final : Au rond-point, prenez la deuxième sortie sur N7: Gap"
+   ]
+  },
+  {
+   "n": 8,
+   "op": "ROUNDABOUT_ENTER",
+   "arg": 2,
+   "troncon": "2.3 km",
+   "rue": "N7",
+   "l1": "[N7] Orange",
+   "l2": "",
+   "sorties": "",
+   "annonces": [
+    "1500 m : Dans 1,5 kilomètre, au rond-point, prenez la deuxième sortie sur N7: Orange ",
+    "1000 m : Dans 1 kilomètre, au rond-point, prenez la deuxième sortie sur N7: Orange ",
+    "800 m : Dans 800 mètres, au rond-point, prenez la deuxième sortie sur N7: Orange ",
+    "400 m : Dans 400 mètres, au rond-point, prenez la deuxième sortie sur N7: Orange ",
+    "200 m : Dans 200 mètres, au rond-point, prenez la deuxième sortie sur N7: Orange ",
+    "final : Au rond-point, prenez la deuxième sortie sur N7: Orange "
+   ]
+  },
+  {
+   "n": 9,
+   "op": "ROUNDABOUT_ENTER",
+   "arg": 1,
+   "troncon": "1.9 km",
+   "rue": "N7",
+   "l1": "[N7] Orange",
+   "l2": "",
+   "sorties": "",
+   "annonces": [
+    "1500 m : Dans 1,5 kilomètre, au rond-point, prenez la première sortie sur N7: Orange, puis tournez à droite",
+    "1000 m : Dans 1 kilomètre, au rond-point, prenez la première sortie sur N7: Orange, puis tournez à droite",
+    "800 m : Dans 800 mètres, au rond-point, prenez la première sortie sur N7: Orange, puis tournez à droite",
+    "400 m : Dans 400 mètres, au rond-point, prenez la première sortie sur N7: Orange, puis tournez à droite",
+    "200 m : Dans 200 mètres, au rond-point, prenez la première sortie sur N7: Orange, puis tournez à droite",
+    "final : Au rond-point, prenez la première sortie sur N7: Orange, puis tournez à droite"
+   ]
+  },
+  {
+   "n": 10,
+   "op": "TURN_RIGHT",
+   "arg": 0,
+   "troncon": "172 m",
+   "rue": "Chemin des Rozets",
+   "l1": "Chemin des Rozets",
+   "l2": "",
+   "sorties": "",
+   "annonces": [
+    "final : Tournez à droite sur Chemin des Rozets"
+   ]
+  },
+  {
+   "n": 11,
+   "op": "TURN_LEFT",
+   "arg": 0,
+   "troncon": "1.0 km",
+   "rue": "Chemin du Bois de l'Hôpital",
+   "l1": "Chemin du Bois de l'Hôpital",
+   "l2": "",
+   "sorties": "",
+   "annonces": [
+    "400 m : Dans 400 mètres, tournez à gauche sur Chemin du Bois de l'Hôpital",
+    "200 m : Dans 200 mètres, tournez à gauche sur Chemin du Bois de l'Hôpital",
+    "final : Tournez à gauche sur Chemin du Bois de l'Hôpital"
+   ]
+  },
+  {
+   "n": 12,
+   "op": "APPROACHING_DESTINATION",
+   "arg": 0,
+   "troncon": "811 m",
+   "rue": "Chemin du Bois de l'Hôpital",
+   "l1": "",
+   "l2": "",
+   "sorties": "",
+   "annonces": [
+    "final : Vous êtes arrivé"
+   ]
+  }
+ ]
+}

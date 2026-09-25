@@ -1,0 +1,90 @@
+{
+ "metres": 2064,
+ "duree": "4 min",
+ "manoeuvres": [
+  {
+   "n": 1,
+   "op": "TURN_RIGHT",
+   "arg": 0,
+   "troncon": "47 m",
+   "rue": "Rue des Joncs",
+   "l1": "Rue des Joncs",
+   "l2": "",
+   "sorties": "",
+   "annonces": [
+    "final : Tournez à droite sur Rue des Joncs, puis au rond-point, prenez la cinquième sortie"
+   ]
+  },
+  {
+   "n": 2,
+   "op": "ROUNDABOUT_ENTER",
+   "arg": 5,
+   "troncon": "246 m",
+   "rue": "Avenue Jean Monnet",
+   "l1": "Avenue Jean Monnet",
+   "l2": "",
+   "sorties": "",
+   "annonces": [
+    "200 m : Dans 200 mètres, au rond-point, prenez la cinquième sortie sur Avenue Jean Monnet",
+    "final : Au rond-point, prenez la cinquième sortie sur Avenue Jean Monnet"
+   ]
+  },
+  {
+   "n": 3,
+   "op": "ROUNDABOUT_ENTER",
+   "arg": 4,
+   "troncon": "654 m",
+   "rue": "Avenue Jean Moulin",
+   "l1": "Avenue Jean Moulin",
+   "l2": "",
+   "sorties": "",
+   "annonces": [
+    "400 m : Dans 400 mètres, au rond-point, prenez la quatrième sortie sur Avenue Jean Moulin",
+    "200 m : Dans 200 mètres, au rond-point, prenez la quatrième sortie sur Avenue Jean Moulin",
+    "final : Au rond-point, prenez la quatrième sortie sur Avenue Jean Moulin"
+   ]
+  },
+  {
+   "n": 4,
+   "op": "ROUNDABOUT_ENTER",
+   "arg": 2,
+   "troncon": "777 m",
+   "rue": "Avenue Théodore Aubanel",
+   "l1": "Avenue Théodore Aubanel",
+   "l2": "",
+   "sorties": "",
+   "annonces": [
+    "400 m : Dans 400 mètres, au rond-point, prenez la deuxième sortie sur Avenue Théodore Aubanel, puis tournez à gauche",
+    "200 m : Dans 200 mètres, au rond-point, prenez la deuxième sortie sur Avenue Théodore Aubanel, puis tournez à gauche",
+    "final : Au rond-point, prenez la deuxième sortie sur Avenue Théodore Aubanel, puis tournez à gauche"
+   ]
+  },
+  {
+   "n": 5,
+   "op": "TURN_LEFT",
+   "arg": 0,
+   "troncon": "275 m",
+   "rue": "Avenue Théodore Aubanel",
+   "l1": "Avenue Théodore Aubanel",
+   "l2": "",
+   "sorties": "",
+   "annonces": [
+    "200 m : Dans 200 mètres, tournez à gauche sur Avenue Théodore Aubanel, puis vous êtes arrivé",
+    "final : Tournez à gauche sur Avenue Théodore Aubanel, puis vous êtes arrivé"
+   ]
+  },
+  {
+   "n": 6,
+   "op": "APPROACHING_DESTINATION",
+   "arg": 0,
+   "troncon": "65 m",
+   "rue": "Avenue Théodore Aubanel",
+   "l1": "",
+   "l2": "",
+   "sorties": "",
+   "annonces": [
+    "final : Vous êtes arrivé"
+   ]
+  }
+ ]
+}
