@@ -6,7 +6,7 @@ Voir, dans WME, un trajet **tel que l'appli Waze le donnera au conducteur** : ch
 
 C'est l'outil pour vérifier ce qu'on vient de poser (une instruction de virage, un panneau, des voies) sans prendre la voiture.
 
-![La fenêtre de WRP sur un trajet Bollène → A7 : la sortie 18 dépliée, avec ses voies, son panneau et ses annonces](capture_0.14.02_fenetre.jpg)
+![La fenêtre de WRP sur un trajet Bollène → A7 : quatre itinéraires proposés, la référence identique, la sortie 18 dépliée avec ses voies, son panneau, ses annonces et le bouton de sélection du segment](capture_0.15.01_fenetre.jpg)
 
 ## Poser le départ et l'arrivée
 
@@ -25,10 +25,18 @@ Le calcul part dès que les deux sont posés. La fenêtre s'ouvre par le bouton 
 - **Les annonces vocales** (puces 🔊, ou ▶ Tout écouter pour enchaîner le trajet), dans la langue de la voix du pays ou d'une voix choisie : anglais, français, allemand, espagnol, italien, portugais, néerlandais, hébreu.
 - **La fiche du trajet** : via, péage, zones traversées (ZFE, zones à permis…), contournements.
 - **Les options du calcul**, comme l'écran « Navigation » de l'appli : heure de départ (à l'heure du lieu), véhicule, péages, autoroutes, ferries, routes non bitumées, intersections difficiles, pass du pays.
+- **Les autres itinéraires** proposés par le serveur, au choix ; les autres restent en gris sur la carte.
+
+## Vérifier une modification
+
+- **Avant / après** : 📌 garde le trajet comme référence — d'office quand on enregistre dans WME, puisque le trajet affiché a été calculé avant. Chaque calcul suivant entre les mêmes départ et arrivée lui est comparé : lignes modifiées (l'infobulle dit ce qu'il y avait) ou nouvelles, instructions disparues, durée. Le calcul de Waze ne voit une modification qu'une fois la carte publiée mise à jour par Waze : c'est à ce moment-là qu'il faut recalculer. Les références restent dans le navigateur, listées dans l'onglet Scripts.
+- **Tester un virage** : sélectionnez deux segments qui se rejoignent ; la ligne du panneau propose « Tester ». Le trajet va de l'un à l'autre et dit s'il prend le virage, et avec quelle instruction.
+- **Sélectionner le segment d'approche** d'une instruction, depuis sa ligne dépliée : ses voies et ses flèches de virage sont là.
+- **Partager** : 🔗 copie un lien WME qui redonne le même trajet et les mêmes options à qui a le script.
 
 Conduite à gauche prise en compte (ronds-points et demi-tours en miroir).
 
-<img src="capture_0.14.02_onglet.jpg" width="256" alt="L'onglet Scripts : réglages et aide">
+<img src="capture_0.15.01_onglet.jpg" width="256" alt="L'onglet Scripts : réglages, références et aide">
 
 ## Ce qu'il faut savoir
 
@@ -45,4 +53,4 @@ Aucune modification de la carte : aucune action n'entre dans la pile d'annulatio
 
 Depuis GreasyFork (Tampermonkey ou Violentmonkey) : les mises à jour arrivent ensuite toutes seules. Retours et idées : [Issues](https://github.com/DrSlump34/WME-Route-Preview/issues). Historique des versions : [HISTORIQUE.md](HISTORIQUE.md). Licence MIT.
 
-Pour les contributeurs : `node tools/check-idents.js WME-Route-Preview.user.js` (toute fonction appelée est déclarée) et `node tools/rejouer-bancs.js` (rejoue les trajets enregistrés de `bancs/` sur le script et compare à `bancs/attendu/`).
+Pour les contributeurs : `node tools/check-idents.js WME-Route-Preview.user.js` (toute fonction appelée est déclarée), `node tools/rejouer-bancs.js` (rejoue les trajets enregistrés de `bancs/` sur le script et compare à `bancs/attendu/`) et `node tools/banc-nouveautes.js` (itinéraires, comparaison à une référence, virage testé).

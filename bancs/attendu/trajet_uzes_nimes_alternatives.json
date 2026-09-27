@@ -1,0 +1,241 @@
+{
+ "metres": 25594,
+ "duree": "31 min",
+ "manoeuvres": [
+  {
+   "n": 1,
+   "op": "TURN_LEFT",
+   "arg": 0,
+   "troncon": "102 m",
+   "rue": "Rue du 4 Septembre",
+   "l1": "Rue du 4 Septembre",
+   "l2": "",
+   "sorties": "",
+   "annonces": [
+    "final : Tournez à gauche sur Rue du 4 Septembre, puis tournez à droite"
+   ]
+  },
+  {
+   "n": 2,
+   "op": "TURN_RIGHT",
+   "arg": 0,
+   "troncon": "57 m",
+   "rue": "Place d'Austerlitz",
+   "l1": "Place d'Austerlitz",
+   "l2": "",
+   "sorties": "",
+   "annonces": [
+    "final : Tournez à droite sur Place d'Austerlitz, puis tournez à gauche"
+   ]
+  },
+  {
+   "n": 3,
+   "op": "TURN_LEFT",
+   "arg": 0,
+   "troncon": "89 m",
+   "rue": "Boulevard Victor Hugo",
+   "l1": "Boulevard Victor Hugo",
+   "l2": "",
+   "sorties": "",
+   "annonces": [
+    "final : Tournez à gauche sur Boulevard Victor Hugo, puis serrez à gauche"
+   ]
+  },
+  {
+   "n": 4,
+   "op": "KEEP_LEFT",
+   "arg": 0,
+   "troncon": "383 m",
+   "rue": "Rue Saint-Julien",
+   "l1": "Rue Saint-Julien",
+   "l2": "",
+   "sorties": "",
+   "annonces": [
+    "200 m : Dans 200 mètres, serrez à gauche sur Rue Saint-Julien",
+    "final : Serrez à gauche sur Rue Saint-Julien"
+   ]
+  },
+  {
+   "n": 5,
+   "op": "TURN_RIGHT",
+   "arg": 0,
+   "troncon": "523 m",
+   "rue": "Avenue de la Libération",
+   "l1": "[D982] Avenue de la Libération",
+   "l2": "Autres Directions",
+   "sorties": "",
+   "annonces": [
+    "400 m : Dans 400 mètres, tournez à droite sur Avenue de la Libération, puis serrez à gauche",
+    "200 m : Dans 200 mètres, tournez à droite sur Avenue de la Libération, puis serrez à gauche",
+    "final : Tournez à droite sur Avenue de la Libération, puis serrez à gauche"
+   ]
+  },
+  {
+   "n": 6,
+   "op": "KEEP_LEFT",
+   "arg": 0,
+   "troncon": "152 m",
+   "rue": "Avenue de la Libération",
+   "l1": "Avenue de la Libération",
+   "l2": "",
+   "sorties": "",
+   "annonces": [
+    "final : Serrez à gauche sur Avenue de la Libération, puis au rond-point, prenez la troisième sortie"
+   ]
+  },
+  {
+   "n": 7,
+   "op": "ROUNDABOUT_ENTER",
+   "arg": 3,
+   "troncon": "21 m",
+   "rue": "Avenue Georges Pompidou",
+   "l1": "Avenue Georges Pompidou",
+   "l2": "Avignon",
+   "sorties": "",
+   "annonces": [
+    "final : Au rond-point, prenez la troisième sortie sur Avenue Georges Pompidou: Avignon"
+   ]
+  },
+  {
+   "n": 8,
+   "op": "ROUNDABOUT_ENTER",
+   "arg": 1,
+   "troncon": "661 m",
+   "rue": "Route de Nîmes",
+   "l1": "Route de Nîmes",
+   "l2": "Avignon",
+   "sorties": "",
+   "annonces": [
+    "400 m : Dans 400 mètres, au rond-point, prenez la première sortie sur : Avignon, puis au rond-point, prenez la deuxième sortie",
+    "200 m : Dans 200 mètres, au rond-point, prenez la première sortie sur : Avignon, puis au rond-point, prenez la deuxième sortie",
+    "final : Au rond-point, prenez la première sortie sur : Avignon, puis au rond-point, prenez la deuxième sortie"
+   ]
+  },
+  {
+   "n": 9,
+   "op": "ROUNDABOUT_ENTER",
+   "arg": 2,
+   "troncon": "462 m",
+   "rue": "Route de Nîmes",
+   "l1": "Route de Nîmes",
+   "l2": "",
+   "sorties": "",
+   "annonces": [
+    "400 m : Dans 400 mètres, au rond-point, prenez la deuxième sortie sur Route de Nîmes, puis au rond-point, prenez la première sortie",
+    "200 m : Dans 200 mètres, au rond-point, prenez la deuxième sortie sur Route de Nîmes, puis au rond-point, prenez la première sortie",
+    "final : Au rond-point, prenez la deuxième sortie sur Route de Nîmes, puis au rond-point, prenez la première sortie"
+   ]
+  },
+  {
+   "n": 10,
+   "op": "ROUNDABOUT_ENTER",
+   "arg": 1,
+   "troncon": "483 m",
+   "rue": "Route de Nîmes",
+   "l1": "Route de Nîmes",
+   "l2": "",
+   "sorties": "",
+   "annonces": [
+    "400 m : Dans 400 mètres, au rond-point, prenez la première sortie sur Route de Nîmes",
+    "200 m : Dans 200 mètres, au rond-point, prenez la première sortie sur Route de Nîmes",
+    "final : Au rond-point, prenez la première sortie sur Route de Nîmes"
+   ]
+  },
+  {
+   "n": 11,
+   "op": "ROUNDABOUT_ENTER",
+   "arg": 2,
+   "troncon": "21 km",
+   "rue": "Rue Sully",
+   "l1": "Rue Sully",
+   "l2": "",
+   "sorties": "",
+   "annonces": [
+    "400 m : Dans 400 mètres, au rond-point, prenez la deuxième sortie sur Rue Sully, puis tournez à droite",
+    "200 m : Dans 200 mètres, au rond-point, prenez la deuxième sortie sur Rue Sully, puis tournez à droite",
+    "final : Au rond-point, prenez la deuxième sortie sur Rue Sully, puis tournez à droite"
+   ]
+  },
+  {
+   "n": 12,
+   "op": "TURN_RIGHT",
+   "arg": 0,
+   "troncon": "392 m",
+   "rue": "Rue Pierre Semard",
+   "l1": "Rue Pierre Semard",
+   "l2": "",
+   "sorties": "",
+   "annonces": [
+    "200 m : Dans 200 mètres, tournez à droite sur Rue Pierre Semard",
+    "final : Tournez à droite sur Rue Pierre Semard"
+   ]
+  },
+  {
+   "n": 13,
+   "op": "TURN_LEFT",
+   "arg": 0,
+   "troncon": "943 m",
+   "rue": "",
+   "l1": "",
+   "l2": "",
+   "sorties": "",
+   "annonces": [
+    "400 m : Dans 400 mètres, tournez à gauche, puis tournez à droite",
+    "200 m : Dans 200 mètres, tournez à gauche, puis tournez à droite",
+    "final : Tournez à gauche, puis tournez à droite"
+   ]
+  },
+  {
+   "n": 14,
+   "op": "TURN_RIGHT",
+   "arg": 0,
+   "troncon": "21 m",
+   "rue": "Rue de la Couronne",
+   "l1": "Rue de la Couronne",
+   "l2": "",
+   "sorties": "",
+   "annonces": [
+    "final : Tournez à droite sur Rue de la Couronne, puis tournez à gauche"
+   ]
+  },
+  {
+   "n": 15,
+   "op": "TURN_LEFT",
+   "arg": 0,
+   "troncon": "77 m",
+   "rue": "Rue des Chapeliers",
+   "l1": "Rue des Chapeliers",
+   "l2": "",
+   "sorties": "",
+   "annonces": [
+    "final : Tournez à gauche sur Rue des Chapeliers, puis tournez à droite"
+   ]
+  },
+  {
+   "n": 16,
+   "op": "TURN_RIGHT",
+   "arg": 0,
+   "troncon": "73 m",
+   "rue": "Rue Régale",
+   "l1": "Rue Régale",
+   "l2": "",
+   "sorties": "",
+   "annonces": [
+    "final : Tournez à droite sur Rue Régale, puis vous êtes arrivé"
+   ]
+  },
+  {
+   "n": 17,
+   "op": "APPROACHING_DESTINATION",
+   "arg": 0,
+   "troncon": "112 m",
+   "rue": "Rue de la Trésorerie",
+   "l1": "",
+   "l2": "",
+   "sorties": "",
+   "annonces": [
+    "final : Vous êtes arrivé"
+   ]
+  }
+ ]
+}

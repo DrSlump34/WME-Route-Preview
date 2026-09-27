@@ -1,5 +1,27 @@
 # WME Route Preview — historique des versions
 
+## 0.15.01
+
+- Lien à partager : lu une seule fois par onglet. WME remet les paramètres du lien dans l'adresse à chaque sélection : recharger la page relançait le calcul et réimposait les options du lien.
+- « Rouvrir » une référence n'enregistre plus ses options dans les réglages : elles valent pour ce trajet, comme celles d'un lien.
+
+## 0.15.00
+
+- **Avant / après une modification** : 📌 garde le trajet comme référence (d'office quand on enregistre dans WME, puisqu'il a été calculé avant) ; chaque calcul suivant entre les mêmes départ et arrivée lui est comparé — lignes « modifiée » (l'infobulle dit ce qu'il y avait) ou « nouvelle », instructions disparues, durée et distance. Références listées dans l'onglet Scripts (rouvrir, supprimer), dans le navigateur seulement.
+- **Autres itinéraires** : ceux que propose le serveur (jusqu'à 4), sous le résumé ; les autres restent en gris sur la carte.
+- **Tester un virage** : deux segments contigus sélectionnés ⇒ la ligne du panneau propose « Tester » (⇅ pour le sens) ; la fenêtre dit si le trajet prend le virage, et avec quelle instruction.
+- **Sélectionner le segment d'approche** depuis la ligne dépliée : ses voies, ses flèches de virage.
+- **Lien à partager** (🔗) : départ, arrivée et options dans l'adresse de WME.
+- Charte : pilule pleine #1976d2 ; insécables de la typographie française dans l'interface.
+
+## 0.14.05
+
+- Un point posé ou un trajet calculé pendant que la fenêtre est fermée (ligne TRAJET du panneau, raccourcis) s'affiche sur la carte ; seule la fermeture de la fenêtre le retire.
+
+## 0.14.04
+
+- Fermer la fenêtre retire le trajet de la carte (tracé, manœuvres, départ, arrivée) ; la rouvrir le remontre. La case du sélecteur de calques garde son rôle.
+
 ## 0.14.03
 
 - Nouvelle icône, tirée de l'illustration du projet : flèche de virage et haut-parleur (bouton de la carte, onglet, fenêtre, gestionnaire de scripts).

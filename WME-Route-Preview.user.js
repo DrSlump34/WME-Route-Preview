@@ -3,7 +3,7 @@
 // @name:fr      WME Route Preview
 // @icon         data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHdpZHRoPSc2NCcgaGVpZ2h0PSc2NCcgdmlld0JveD0nMCAwIDY0IDY0Jz48ZGVmcz48bGluZWFyR3JhZGllbnQgaWQ9J2cnIHgxPScwJyB5MT0nMCcgeDI9JzAnIHkyPScxJz48c3RvcCBvZmZzZXQ9JzAnIHN0b3AtY29sb3I9JyMxZTliZjAnLz48c3RvcCBvZmZzZXQ9JzEnIHN0b3AtY29sb3I9JyMxNTY1YzAnLz48L2xpbmVhckdyYWRpZW50PjwvZGVmcz48cmVjdCB3aWR0aD0nNjQnIGhlaWdodD0nNjQnIHJ4PScxNCcgZmlsbD0ndXJsKCNnKScvPjxwYXRoIGQ9J00xNSA1NSBWMzQgUTE1IDI1IDI0IDI1IEgzMScgZmlsbD0nbm9uZScgc3Ryb2tlPScjZmZmJyBzdHJva2Utd2lkdGg9JzknIHN0cm9rZS1saW5lY2FwPSdyb3VuZCcgc3Ryb2tlLWxpbmVqb2luPSdyb3VuZCcvPjxwYXRoIGQ9J00yOSAxMyBMNDMgMjUgTDI5IDM3IFonIGZpbGw9JyNmZmYnIHN0cm9rZT0nI2ZmZicgc3Ryb2tlLXdpZHRoPSczJyBzdHJva2UtbGluZWpvaW49J3JvdW5kJy8+PHBhdGggZD0nTTM3IDQ3IEg0MiBMNTAgNDAgVjYwIEw0MiA1MyBIMzcgWicgZmlsbD0nI2ZiOGMwMCcgc3Ryb2tlPScjZmI4YzAwJyBzdHJva2Utd2lkdGg9JzEuNScgc3Ryb2tlLWxpbmVqb2luPSdyb3VuZCcvPjxwYXRoIGQ9J001NCA0NCBRNTcuNSA1MCA1NCA1NicgZmlsbD0nbm9uZScgc3Ryb2tlPScjZmI4YzAwJyBzdHJva2Utd2lkdGg9JzMnIHN0cm9rZS1saW5lY2FwPSdyb3VuZCcvPjwvc3ZnPgo=
 // @namespace    https://github.com/DrSlump34
-// @version      0.14.03
+// @version      0.15.01
 // @description  Preview a route in WME the way the Waze app gives it: set a start and a finish (segment, place, search or pointer), then read every instruction as in the app list — road shields, exit signs, lanes, roundabouts — and hear every voice prompt spoken by the real Waze voice, including the custom turn guidance set by editors. Route options as in the app (time, vehicle, avoidances, passes). The script never changes the map.
 // @description:fr Prévisualiser un trajet dans WME comme l'appli Waze le donne : posez un départ et une arrivée (segment, lieu, recherche ou pointeur), puis lisez chaque instruction comme dans la liste de l'appli — écussons, panneaux de sortie, voies, ronds-points — et écoutez chaque annonce dite par la vraie voix de Waze, y compris les instructions personnalisées posées par les éditeurs. Options du calcul comme dans l'appli (heure, véhicule, évitements, pass). Le script ne modifie jamais la carte.
 // @author       DrSlump34
@@ -52,12 +52,16 @@
     const L_POINTS = 'wrp-points';
     const L_FLASH = 'wrp-flash';
     const L_ZONES = 'wrp-zones';
+    const L_ALT = 'wrp-alt';
     const FLASH_MS = 1600;
 
     let sdk = null;
     let paneEl = null;
     let pts = { A: null, B: null };     // {lon, lat, label}
     let trajet = null;                  // {manoeuvres, metres, secondes, coords, annonces, fiche, zones, R…}
+    let trajets = [];                   // les itinéraires rendus par le serveur ; trajet est l'un d'eux
+    let choixAlt = 0;
+    let virageTeste = null;             // {de, vers} : le virage que le trajet doit prendre (ligne TRAJET, 2 segments)
     let lecture = null;                 // lecture enchaînée en cours
     const cacheVoix = new Map();
 
@@ -106,8 +110,11 @@
             aide: [
                 { t: 'Set the start and the finish', b: '<p><b>From the panel</b>: select a segment or a place, then the green flag (start) or the checkered flag (finish) on its ROUTE row.</p><p><b>By search</b>: type an address or a place in the window fields; <kbd>↑</kbd> <kbd>↓</kbd> then <kbd>Enter</kbd>.</p><p><b>By keyboard</b>: two shortcuts, start / finish under the pointer, without keys by default: Settings › Keyboard shortcuts.</p><p>The route is computed as soon as both are set. ⇅ swaps them, ✕ clears the route.</p>' },
                 { t: 'The window', b: '<p>Opened by the button on the right of the map (same icon), or on its own after a computation (setting above).</p><p>Drag the header to move it, the corner to resize it; double-click the header to put it back. It never covers the map buttons.</p>' },
-                { t: 'The list and the voice prompts', b: '<p>One row per instruction, as in the app list. A click unfolds the row (lanes, “then”) and centres the map on the intersection.</p><p>✎ = instruction set by an editor. Each 🔊 chip plays one prompt with the Waze voice; ▶ Listen to all plays the whole drive.</p><p>Prompts follow the local planner found in the app code: 1.5 km, 1 km and 800 m above 70 km/h, 400 m and 200 m, then at the intersection — each only if the stretch since the previous turn is long enough. The app may get its prompts from the Waze server, or be set to a brief mode, and then speak less often: not measured yet.</p>' },
+                { t: 'The list and the voice prompts', b: '<p>One row per instruction, as in the app list. A click unfolds the row (lanes, “then”) and centres the map on the intersection; <b>Select the approach segment</b> then selects it in WME, with its lanes and turn arrows.</p><p>✎ = instruction set by an editor. Each 🔊 chip plays one prompt with the Waze voice; ▶ Listen to all plays the whole drive.</p><p>Prompts follow the local planner found in the app code: 1.5 km, 1 km and 800 m above 70 km/h, 400 m and 200 m, then at the intersection — each only if the stretch since the previous turn is long enough. The app may get its prompts from the Waze server, or be set to a brief mode, and then speak less often: not measured yet.</p>' },
                 { t: 'Route options', b: '<p>The app “Navigation” settings: departure now (live traffic) or later (usual traffic at that time, up to 14 days), vehicle, avoid tolls, freeways or ferries, unpaved roads, difficult intersections.</p><p>Passes: those of the country shown on the map; the ones that matter for this route come first, in bold.</p>' },
+                { t: 'Other routes and tested turn', b: '<p>When the server offers several routes, they are listed under the summary (duration · distance · via): a click shows one; the others stay grey on the map.</p><p><b>Test a turn</b>: select two segments that meet at a node; the ROUTE row of the panel offers <b>Test</b> (⇅ swaps the direction). The route goes from the first to the second and says whether it takes the turn, and with which instruction.</p>' },
+                { t: 'Before / after an edit', b: '<p>📌 keeps the route as the <b>reference</b>; when you save in WME, the route shown is kept on its own (it was computed before the save). Each later computation between the same start and finish is compared with it: <b>changed</b> or <b>new</b> rows, gone instructions and duration are given in the summary.</p><p>The router uses the published map: an edit reaches it only once Waze has updated that map (Waze sets the delay). The ✎ and custom voice text are read in WME, so they already show the edit.</p><p>References: in this browser only, listed in this tab.</p>' },
+                { t: 'Sharing a route', b: '<p>🔗 copies a WME link: whoever opens it with the script gets the same start, finish and options (departure: now).</p>' },
                 { t: 'Where the data comes from', b: '<p>The route, the signs and the zones come from the Waze routing server: it is the PUBLISHED map — an unsaved edit does not show.</p><p>Lanes and custom voice text of intersections outside the view are read from WME data, like WME does when you pan.</p>' },
             ],
             optVoice: 'Voice and phrases:', voiceAuto: 'Automatic',
@@ -130,6 +137,31 @@
             segLabel: (name, id) => (name || 'Unnamed') + ' · segment ' + id,
             then: 'then',
             here: 'at the intersection', atArrival: 'on arrival', lblStart: 'Start', lblFinish: 'Finish',
+            altTip: k => 'Route ' + k + ' proposed by the Waze server', unnamed: 'unnamed',
+            selSeg: 'Select the approach segment', selAbsent: 'This segment is not loaded in WME: zoom in on it and try again.',
+            selSegTip: 'Selects in WME the segment you arrive on: its lanes, and the turn arrows that lead to the custom instruction',
+            turnLbl: 'Turn', turnTest: 'Test', turnTestTip: 'Compute a route from the first segment to the second through their common node',
+            turnSwap: 'Swap the direction of the turn', turnBadSel: 'Select two segments that meet at a node.',
+            turnOk: n => 'Tested turn: instruction ' + n, turnOkTip: 'The route takes the tested turn; the row is unfolded below.',
+            turnSilent: 'Tested turn: taken, no instruction', turnSilentTip: 'The route takes the turn and the app says nothing there.',
+            turnNo: 'Tested turn: not taken',
+            turnNoTip: 'The route does not take this turn: it may be disallowed or restricted, or the router prefers another path. Check the arrows in WME.',
+            turnNoAlt: n => 'Route ' + n + ' takes it (choose it above).',
+            pinTip: 'Keep this route as the reference: later computations between the same start and finish are compared with it',
+            pinReplace: d => 'Replace the reference of ' + d + ' with this route', pinDone: 'Route kept as the reference.',
+            refSame: d => 'Same as on ' + d,
+            refDiff: (d, mod, nou, dis) => 'Since ' + d + ': ' + [mod ? mod + ' changed' : '', nou ? nou + ' new' : '', dis ? dis + ' gone' : ''].filter(x => x).join(', '),
+            refTime: (a, b) => 'Duration ' + a + ' → ' + b, refDist: (a, b) => 'distance ' + a + ' → ' + b,
+            refOtherOpts: 'Computed with other options than the reference.', refGone: l => 'Gone: ' + l,
+            refTipSame: 'Every instruction, sign, lane and custom voice text is unchanged.',
+            diffMod: 'changed', diffNew: 'new', diffNewTip: 'No instruction here in the reference', diffBefore: 'Before',
+            dLanes: 'lanes changed', dPersoOn: 'custom instruction added', dPersoOff: 'custom instruction removed', dVoice: x => 'voice: « ' + x + ' »',
+            savedRef: h => 'Saved at ' + h + '. The route shown was computed before this save: it is kept as the reference 📌. The Waze router uses edits once Waze has updated the published map (Waze sets the delay): recompute ⟳ then to see what changes.',
+            savedHasRef: h => 'Saved at ' + h + '. This route already has a reference 📌: recompute ⟳ once Waze has updated the published map to compare.',
+            secRefs: 'References', refsHint: 'Routes kept for comparison (📌 in the window, or automatically when you save in WME). Stored in this browser only.',
+            refsNone: 'No reference yet.', refOpen: 'Reopen', refDel: 'Delete this reference',
+            link: 'Copy a link to this route', linkCopied: 'Link copied: opened in WME with the script, it gives back this route.',
+            linkFail: 'Copy failed: the link is in the browser console.', linkIn: 'Route received by link: its options are applied.',
         },
         fr: {
             openWin: 'Ouvrir la fenêtre', secSettings: 'Réglages', optOpen: 'Ouvrir la fenêtre dès qu’un trajet est calculé',
@@ -139,45 +171,48 @@
             veh_PRIVATE: 'Voiture', veh_TAXI: 'Taxi', veh_MOTORCYCLE: 'Moto', veh_EV: 'Électrique',
             av_peages: 'péages', av_autoroutes: 'autoroutes', av_ferries: 'ferries', avoidShort: x => 'éviter ' + x,
             nPass: n => n + ' pass', noPass: 'Aucun pass dans ce pays.',
-            optNote: 'Départ plus tard : heure du lieu du trajet, trafic habituel à cette heure (pas le trafic en direct). Les pass sont ceux du pays affiché sur la carte.',
-            via: x => 'Via ' + x, toll: x => 'Péage ~ ' + x, tollUnknown: 'Péage', tollTip: d => 'Portion à péage : ' + d,
+            optNote: 'Départ plus tard\u00a0: heure du lieu du trajet, trafic habituel à cette heure (pas le trafic en direct). Les pass sont ceux du pays affiché sur la carte.',
+            via: x => 'Via ' + x, toll: x => 'Péage ~ ' + x, tollUnknown: 'Péage', tollTip: d => 'Portion à péage\u00a0: ' + d,
             zoneTip: 'Zone traversée par le trajet (ZFE, zone à permis…)',
-            zoneAvoidTip: 'Zone que le trajet aurait dû éviter : il la traverse quand même',
-            permits: x => 'Permis exigés : ' + x, bypass: 'Zone restreinte contournée',
+            zoneAvoidTip: 'Zone que le trajet aurait dû éviter\u00a0: il la traverse quand même',
+            permits: x => 'Permis exigés\u00a0: ' + x, bypass: 'Zone restreinte contournée',
             bypassTip: 'Le calcul a dû contourner une zone restreinte', unpaved: 'Route non bitumée',
             majBtn: v => 'La version ' + v + ' est disponible', majInstall: 'Installer',
-            departPasse: 'Cette heure est passée : départ remis à maintenant.',
-            heureLieu: (h, tz) => 'Heure sur place : ' + h + ' (' + tz + ')',
+            departPasse: 'Cette heure est passée\u00a0: départ remis à maintenant.',
+            heureLieu: (h, tz) => 'Heure sur place\u00a0: ' + h + ' (' + tz + ')',
             heureNav: (h, tz) => 'Fuseau de votre navigateur (' + tz + ', ' + h + ') en attendant que le premier calcul donne celui du lieu',
-            errNoRoute: 'Aucun itinéraire entre ces deux points : déplacez l’un d’eux sur une route praticable.',
-            errNet: 'Le serveur de calcul de Waze est injoignable : vérifiez la connexion, puis ⟳.',
-            errTimeout: 'Le serveur de calcul de Waze n’a pas répondu à temps : réessayez (⟳).',
-            errHttp: c => 'Le serveur de calcul de Waze a refusé la demande (HTTP ' + c + ') : réessayez (⟳) ; si cela persiste, déplacez un point.',
-            errServeur: m => 'Le serveur de calcul de Waze a répondu : « ' + m + ' ». Déplacez un point ou changez les options.',
-            searchFail: 'La recherche a échoué : réessayez.',
+            errNoRoute: 'Aucun itinéraire entre ces deux points\u00a0: déplacez l’un d’eux sur une route praticable.',
+            errNet: 'Le serveur de calcul de Waze est injoignable\u00a0: vérifiez la connexion, puis ⟳.',
+            errTimeout: 'Le serveur de calcul de Waze n’a pas répondu à temps\u00a0: réessayez (⟳).',
+            errHttp: c => 'Le serveur de calcul de Waze a refusé la demande (HTTP ' + c + ')\u00a0: réessayez (⟳)\u00a0; si cela persiste, déplacez un point.',
+            errServeur: m => 'Le serveur de calcul de Waze a répondu\u00a0: «\u00a0' + m + '\u00a0». Déplacez un point ou changez les options.',
+            searchFail: 'La recherche a échoué\u00a0: réessayez.',
             junctions: (l, n) => l + '/' + n + ' carrefours hors de la vue lus',
             junctionsTip: 'Les voies et les ✎ des autres carrefours hors de la vue n’ont pas pu être lus (échec ou plafond de 40).',
             optionsBtn: 'Options du calcul', optionsTip: 'Cliquer pour régler le départ, le véhicule, les routes à éviter et les pass', optionsTipClose: 'Cliquer pour refermer les options',
-            sbHint: 'Prévisualiser un trajet comme l’appli Waze le donne : instructions, panneaux, voies et annonces vocales.',
-            voiceHint: 'Automatique : votre langue si le pays la propose, sinon la voix du pays. Choisir une voix pour entendre ce qu’entendent les conducteurs du pays.',
+            sbHint: 'Prévisualiser un trajet comme l’appli Waze le donne\u00a0: instructions, panneaux, voies et annonces vocales.',
+            voiceHint: 'Automatique\u00a0: votre langue si le pays la propose, sinon la voix du pays. Choisir une voix pour entendre ce qu’entendent les conducteurs du pays.',
             sbHelp: 'Aide', sbSafe: 'Le script ne modifie jamais la carte.',
             aide: [
-                { t: 'Poser le départ et l’arrivée', b: '<p><b>Depuis le panneau</b> : sélectionnez un segment ou un lieu, puis le drapeau vert (départ) ou à damier (arrivée) de sa ligne TRAJET.</p><p><b>Par la recherche</b> : tapez une adresse ou un lieu dans les champs de la fenêtre ; <kbd>↑</kbd> <kbd>↓</kbd> puis <kbd>Entrée</kbd>.</p><p><b>Au clavier</b> : deux raccourcis, départ / arrivée sous le pointeur, sans touches par défaut : Paramètres › Raccourcis clavier.</p><p>Le calcul part dès que les deux sont posés. ⇅ les inverse, ✕ efface le trajet.</p>' },
-                { t: 'La fenêtre', b: '<p>Ouverte par le bouton à droite de la carte (même icône), ou d’elle-même après un calcul (réglage ci-dessus).</p><p>Glisser l’en-tête pour la déplacer, le coin pour l’agrandir ; double-clic sur l’en-tête pour la remettre en place. Elle ne passe jamais sur les boutons de la carte.</p>' },
-                { t: 'La liste et les annonces', b: '<p>Une ligne par instruction, comme la liste de l’appli. Un clic la déplie (voies, « puis ») et centre la carte sur l’intersection.</p><p>✎ = instruction posée par un éditeur. Chaque puce 🔊 fait entendre une annonce avec la voix de Waze ; ▶ Tout écouter enchaîne le trajet.</p><p>Les annonces suivent le planificateur local lu dans le code de l’appli : 1,5 km, 1 km et 800 m au-dessus de 70 km/h, 400 m et 200 m, puis à l’intersection — chacune seulement si le tronçon depuis le virage précédent est assez long. L’appli peut recevoir ses annonces du serveur de Waze, ou être réglée en mode bref, et parler alors moins souvent : pas encore mesuré.</p>' },
-                { t: 'Options du calcul', b: '<p>Les réglages « Navigation » de l’appli : départ maintenant (trafic réel) ou plus tard (trafic habituel à cette heure, jusqu’à 14 jours), véhicule, éviter péages, autoroutes ou ferries, routes non bitumées, intersections difficiles.</p><p>Pass : ceux du pays affiché sur la carte ; ceux qui concernent le trajet viennent en tête, en gras.</p>' },
-                { t: 'D’où viennent les données', b: '<p>Le trajet, les panneaux et les zones viennent du serveur de calcul de Waze : c’est la carte PUBLIÉE — une modification non enregistrée n’y paraît pas.</p><p>Les voies et les textes vocaux personnalisés des intersections hors de la vue sont lus dans les données de WME, comme WME le fait quand on se déplace.</p>' },
+                { t: 'Poser le départ et l’arrivée', b: '<p><b>Depuis le panneau</b>\u00a0: sélectionnez un segment ou un lieu, puis le drapeau vert (départ) ou à damier (arrivée) de sa ligne TRAJET.</p><p><b>Par la recherche</b>\u00a0: tapez une adresse ou un lieu dans les champs de la fenêtre\u00a0; <kbd>↑</kbd> <kbd>↓</kbd> puis <kbd>Entrée</kbd>.</p><p><b>Au clavier</b>\u00a0: deux raccourcis, départ / arrivée sous le pointeur, sans touches par défaut\u00a0: Paramètres › Raccourcis clavier.</p><p>Le calcul part dès que les deux sont posés. ⇅ les inverse, ✕ efface le trajet.</p>' },
+                { t: 'La fenêtre', b: '<p>Ouverte par le bouton à droite de la carte (même icône), ou d’elle-même après un calcul (réglage ci-dessus).</p><p>Glisser l’en-tête pour la déplacer, le coin pour l’agrandir\u00a0; double-clic sur l’en-tête pour la remettre en place. Elle ne passe jamais sur les boutons de la carte.</p>' },
+                { t: 'La liste et les annonces', b: '<p>Une ligne par instruction, comme la liste de l’appli. Un clic la déplie (voies, «\u00a0puis\u00a0») et centre la carte sur l’intersection\u00a0; <b>Sélectionner le segment d’approche</b> le sélectionne alors dans WME, avec ses voies et ses flèches de virage.</p><p>✎ = instruction posée par un éditeur. Chaque puce 🔊 fait entendre une annonce avec la voix de Waze\u00a0; ▶ Tout écouter enchaîne le trajet.</p><p>Les annonces suivent le planificateur local lu dans le code de l’appli\u00a0: 1,5 km, 1 km et 800 m au-dessus de 70 km/h, 400 m et 200 m, puis à l’intersection — chacune seulement si le tronçon depuis le virage précédent est assez long. L’appli peut recevoir ses annonces du serveur de Waze, ou être réglée en mode bref, et parler alors moins souvent\u00a0: pas encore mesuré.</p>' },
+                { t: 'Options du calcul', b: '<p>Les réglages «\u00a0Navigation\u00a0» de l’appli\u00a0: départ maintenant (trafic réel) ou plus tard (trafic habituel à cette heure, jusqu’à 14 jours), véhicule, éviter péages, autoroutes ou ferries, routes non bitumées, intersections difficiles.</p><p>Pass\u00a0: ceux du pays affiché sur la carte\u00a0; ceux qui concernent le trajet viennent en tête, en gras.</p>' },
+                { t: 'Autres itinéraires et virage testé', b: '<p>Quand le serveur propose plusieurs itinéraires, ils sont listés sous le résumé (durée · distance · via)\u00a0: un clic en affiche un\u00a0; les autres restent en gris sur la carte.</p><p><b>Tester un virage</b>\u00a0: sélectionnez deux segments qui se rejoignent à un nœud\u00a0; la ligne TRAJET du panneau propose <b>Tester</b> (⇅ inverse le sens). Le trajet va du premier au second et dit s’il prend le virage, et avec quelle instruction.</p>' },
+                { t: 'Avant / après une modification', b: '<p>📌 garde le trajet comme <b>référence</b>\u00a0; quand vous enregistrez dans WME, le trajet affiché est gardé d’office (il a été calculé avant l’enregistrement). Chaque calcul suivant entre les mêmes départ et arrivée lui est comparé\u00a0: lignes <b>modifiées</b> ou <b>nouvelles</b>, instructions disparues et durée sont données dans le résumé.</p><p>Le calcul se fait sur la carte publiée\u00a0: une modification ne l’atteint qu’une fois cette carte mise à jour par Waze (délai fixé par Waze). Les ✎ et textes vocaux personnalisés sont lus dans WME\u00a0: eux montrent la modification tout de suite.</p><p>Références\u00a0: dans ce navigateur seulement, listées dans cet onglet.</p>' },
+                { t: 'Partager un trajet', b: '<p>🔗 copie un lien WME\u00a0: ouvert avec le script, il redonne le même départ, la même arrivée et les mêmes options (départ\u00a0: maintenant).</p>' },
+                { t: 'D’où viennent les données', b: '<p>Le trajet, les panneaux et les zones viennent du serveur de calcul de Waze\u00a0: c’est la carte PUBLIÉE — une modification non enregistrée n’y paraît pas.</p><p>Les voies et les textes vocaux personnalisés des intersections hors de la vue sont lus dans les données de WME, comme WME le fait quand on se déplace.</p>' },
             ],
-            optVoice: 'Voix et phrases :', voiceAuto: 'Automatique',
-            searchPh: k => (k === 'A' ? 'Départ' : 'Arrivée') + ' : rechercher une adresse ou un lieu',
+            optVoice: 'Voix et phrases\u00a0:', voiceAuto: 'Automatique',
+            searchPh: k => (k === 'A' ? 'Départ' : 'Arrivée') + '\u00a0: rechercher une adresse ou un lieu',
             noResult: 'Aucun résultat.', noSearch: 'La recherche n’est pas disponible dans cette version de WME.',
             dragTip: 'Glisser pour déplacer · double-clic pour la remettre en place', close: 'Fermer', recompute: 'Recalculer',
             nInstr: n => n + ' instruction' + (n > 1 ? 's' : ''),
-            emptyHint: 'Recherchez une adresse ou un lieu ci-dessus, ou sélectionnez un segment ou un lieu et appuyez sur le drapeau de départ ou d’arrivée dans son panneau (ou sur « Sélection » ici).',
+            emptyHint: 'Recherchez une adresse ou un lieu ci-dessus, ou sélectionnez un segment ou un lieu et appuyez sur le drapeau de départ ou d’arrivée dans son panneau (ou sur «\u00a0Sélection\u00a0» ici).',
             setA: 'Partir d’ici', setB: 'Arriver ici', details: 'Détail',
-            scA: 'Route Preview : départ sous le pointeur', scB: 'Route Preview : arrivée sous le pointeur',
+            scA: 'Route Preview\u00a0: départ sous le pointeur', scB: 'Route Preview\u00a0: arrivée sous le pointeur',
             nearLabel: (name, id) => 'Près de ' + (name || 'voie sans nom') + ' · segment ' + id,
-            ptLabel: (lat, lon) => 'Point ' + lat + ' ; ' + lon, noPointer: 'Survolez d’abord la carte.',
+            ptLabel: (lat, lon) => 'Point ' + lat + '\u00a0; ' + lon, noPointer: 'Survolez d’abord la carte.',
             secRoute: 'Trajet', take: 'Sélection', swap: 'Inverser départ et arrivée', clear: 'Effacer le trajet', compute: 'Calculer',
             playAll: '▶ Tout écouter', stop: '■ Arrêter',
             none: 'non défini', needAB: 'Définissez d\'abord le départ et l\'arrivée.',
@@ -186,6 +221,31 @@
             at: d => 'à ' + d, noVoice: 'Voix indisponible ici.',
             custom: 'Instruction personnalisée posée sur ce virage dans WME',
             segLabel: (name, id) => (name || 'Sans nom') + ' · segment ' + id,
+            altTip: k => 'Itinéraire ' + k + ' proposé par le serveur de Waze', unnamed: 'sans nom',
+            selSeg: 'Sélectionner le segment d’approche', selAbsent: 'Ce segment n’est pas chargé dans WME\u00a0: zoomez dessus et recommencez.',
+            selSegTip: 'Sélectionne dans WME le segment par lequel on arrive\u00a0: ses voies, et les flèches de virage qui mènent à l’instruction personnalisée',
+            turnLbl: 'Virage', turnTest: 'Tester', turnTestTip: 'Calcule un trajet qui passe du premier segment au second par leur nœud commun',
+            turnSwap: 'Inverser le sens du virage', turnBadSel: 'Sélectionnez deux segments qui se rejoignent à un nœud.',
+            turnOk: n => 'Virage testé\u00a0: instruction ' + n, turnOkTip: 'Le trajet prend le virage testé\u00a0; sa ligne est dépliée ci-dessous.',
+            turnSilent: 'Virage testé\u00a0: pris, sans instruction', turnSilentTip: 'Le trajet prend le virage et l’appli n’y dit rien.',
+            turnNo: 'Virage testé\u00a0: non pris',
+            turnNoTip: 'Le trajet ne prend pas ce virage\u00a0: il est peut-être interdit ou restreint, ou le calcul préfère un autre chemin. Vérifiez les flèches dans WME.',
+            turnNoAlt: n => 'L’itinéraire ' + n + ' le prend (choisissez-le ci-dessus).',
+            pinTip: 'Garder ce trajet comme référence\u00a0: les calculs suivants entre les mêmes départ et arrivée lui sont comparés',
+            pinReplace: d => 'Remplacer la référence du ' + d + ' par ce trajet', pinDone: 'Trajet gardé comme référence.',
+            refSame: d => 'Identique au ' + d,
+            refDiff: (d, mod, nou, dis) => 'Depuis le ' + d + '\u00a0: ' + [mod ? mod + ' modifiée' + (mod > 1 ? 's' : '') : '', nou ? nou + ' nouvelle' + (nou > 1 ? 's' : '') : '', dis ? dis + ' disparue' + (dis > 1 ? 's' : '') : ''].filter(x => x).join(', '),
+            refTime: (a, b) => 'Durée ' + a + ' → ' + b, refDist: (a, b) => 'distance ' + a + ' → ' + b,
+            refOtherOpts: 'Calculé avec d’autres options que la référence.', refGone: l => 'Disparues\u00a0: ' + l,
+            refTipSame: 'Instructions, panneaux, voies et textes vocaux personnalisés\u00a0: rien n’a changé.',
+            diffMod: 'modifiée', diffNew: 'nouvelle', diffNewTip: 'Aucune instruction ici dans la référence', diffBefore: 'Avant',
+            dLanes: 'voies modifiées', dPersoOn: 'instruction personnalisée ajoutée', dPersoOff: 'instruction personnalisée retirée', dVoice: x => 'voix\u00a0: «\u00a0' + x + '\u00a0»',
+            savedRef: h => 'Enregistré à ' + h + '. Le trajet affiché a été calculé avant cet enregistrement\u00a0: il est gardé comme référence 📌. Le calcul de Waze ne prend les modifications qu’une fois la carte publiée mise à jour par Waze (délai fixé par Waze)\u00a0: recalculez ⟳ à ce moment-là pour voir ce qui change.',
+            savedHasRef: h => 'Enregistré à ' + h + '. Ce trajet a déjà une référence 📌\u00a0: recalculez ⟳ une fois la carte publiée mise à jour par Waze pour comparer.',
+            secRefs: 'Références', refsHint: 'Trajets gardés pour comparer (📌 dans la fenêtre, ou d’office quand vous enregistrez dans WME). Conservés dans ce navigateur seulement.',
+            refsNone: 'Aucune référence pour l’instant.', refOpen: 'Rouvrir', refDel: 'Supprimer cette référence',
+            link: 'Copier un lien vers ce trajet', linkCopied: 'Lien copié\u00a0: ouvert dans WME avec le script, il redonne ce trajet.',
+            linkFail: 'La copie a échoué\u00a0: le lien est dans la console du navigateur.', linkIn: 'Trajet reçu par lien\u00a0: ses options sont appliquées.',
             ops: {
                 TURN_LEFT: 'Tournez à gauche', TURN_RIGHT: 'Tournez à droite', KEEP_LEFT: 'Serrez à gauche', KEEP_RIGHT: 'Serrez à droite',
                 EXIT_LEFT: 'Sortez à gauche', EXIT_RIGHT: 'Sortez à droite', UTURN: 'Faites demi-tour', CONTINUE: 'Continuez tout droit',
@@ -364,7 +424,7 @@
         const q = [
             ['from', 'x:' + a.lon + ' y:' + a.lat], ['to', 'x:' + b.lon + ' y:' + b.lat],
             ['at', at], ['returnJSON', true], ['returnGeometries', true], ['returnInstructions', true],
-            ['timeout', 60000], ['nPaths', 1], ['clientVersion', '4.0.0'], ['type', 'HISTORIC_TIME'],
+            ['timeout', 60000], ['nPaths', 3], ['clientVersion', '4.0.0'], ['type', 'HISTORIC_TIME'],
             ['options', eviter.join(',')], ['vehicleType', VEHICULES.includes(opts.vehicule) ? opts.vehicule : 'PRIVATE'],
         ].concat(passActifs().map(id => ['subscription', id]));
         const url = urlRouteur() + '?' + q.map(([k, v]) => k + '=' + encodeURIComponent(v)).join('&');
@@ -548,6 +608,8 @@
         // Ce qui n'a pas pu être lu se DIT : une ligne sans voies ni ✎ ressemblait sinon à un manque de la carte.
         tr.carrefours = { total: candidats.length, lus, echecs: aLire.length - lus, plafond: candidats.length - aLire.length };
         log('carrefours hors de la vue : ' + lus + '/' + candidats.length + ' lus' + (changes.length ? ', ' + changes.length + ' instruction(s) complétée(s)' : ''));
+        // Voies et ✎ complétés changent la comparaison à la référence : on la refait avant de redessiner.
+        tr.comparaison = comparerRef(tr);
         // Seules les lignes complétées sont redessinées : la liste garde sa position (audit C6).
         const lis = ovEl ? ovEl.querySelectorAll('.wrp-list li') : [];
         for (const k of changes) {
@@ -646,9 +708,11 @@
         return choisie ? voies : null;
     }
 
-    function analyser(j) {
-        const r = j.response || (j.alternatives && j.alternatives[0] && j.alternatives[0].response);
-        const coords = j.coords || (j.alternatives && j.alternatives[0] && j.alternatives[0].coords) || [];
+    // n : rang de l'itinéraire dans la réponse (0 = celui que l'appli propose d'office).
+    function analyser(j, n) {
+        const alt = j.alternatives && j.alternatives[n || 0];
+        const r = n ? alt && alt.response : j.response || (alt && alt.response);
+        const coords = (n ? alt && alt.coords : j.coords || (alt && alt.coords)) || [];
         if (!r || !r.results) throw new Error('no route');
         const R = r.results, noms = r.streetNames || [];
         const tgs = lireGuidages();
@@ -1229,6 +1293,11 @@
     // piège déjà vécu le 21/07 sur un autre script).
     function poserCalques() {
         try {
+            // Les autres itinéraires, en gris SOUS le trajet choisi (posé avant lui).
+            sdk.Map.addLayer({
+                layerName: L_ALT,
+                styleRules: [{ style: { strokeColor: '#78909c', strokeWidth: 5, strokeOpacity: 0.55, strokeLinecap: 'round', pointerEvents: 'none' } }],
+            });
             sdk.Map.addLayer({
                 layerName: L_ROUTE,
                 styleRules: [{ style: { strokeColor: '#2196f3', strokeWidth: 7, strokeOpacity: 0.75, strokeLinecap: 'round', pointerEvents: 'none' } }],
@@ -1253,17 +1322,27 @@
                 styleRules: [{ style: { pointRadius: 16, fillOpacity: 0, strokeColor: '#ff00ff', strokeWidth: 4, strokeOpacity: 1, pointerEvents: 'none' } }],
             });
         } catch (e) { log('calques : ' + e.message); }
+        appliquerVisibilite();
     }
 
     // Une case « WME Route Preview » dans le sélecteur de calques de WME montre ou masque le trajet (audit E3).
     // Un seul endroit écrit l'état : basculerCalques(). Un nouveau calcul réaffiche le trajet.
+    // Fermer la fenêtre retire le trajet de la carte, la rouvrir le remontre (demande de l'auteur, 27/09 :
+    // sinon rien ne l'enlevait). Mais un point posé ou un trajet calculé fenêtre fermée (ligne TRAJET du
+    // panneau, raccourcis, ouverture au calcul coupée) se montre : c'est un geste nouveau, pas celui qu'on
+    // a fermé. La case garde le choix de l'utilisateur.
     const CASE_CALQUES = SCRIPT_NAME;
     let calquesVisibles = true;
+    let masqueParFermeture = true;
+    function appliquerVisibilite() {
+        const v = calquesVisibles && !masqueParFermeture;
+        for (const l of [L_ALT, L_ROUTE, L_ZONES, L_POINTS, L_FLASH]) {
+            try { sdk.Map.setLayerVisibility({ layerName: l, visibility: v }); } catch (e) { }
+        }
+    }
     function basculerCalques(on) {
         calquesVisibles = !!on;
-        for (const l of [L_ROUTE, L_ZONES, L_POINTS, L_FLASH]) {
-            try { sdk.Map.setLayerVisibility({ layerName: l, visibility: calquesVisibles }); } catch (e) { }
-        }
+        appliquerVisibilite();
         try {
             if (sdk.LayerSwitcher.isLayerCheckboxChecked({ name: CASE_CALQUES }) !== calquesVisibles) {
                 sdk.LayerSwitcher.setLayerCheckboxChecked({ name: CASE_CALQUES, isChecked: calquesVisibles });
@@ -1285,11 +1364,16 @@
 
     function dessiner() {
         try {
+            sdk.Map.removeAllFeaturesFromLayer({ layerName: L_ALT });
             sdk.Map.removeAllFeaturesFromLayer({ layerName: L_ROUTE });
             sdk.Map.removeAllFeaturesFromLayer({ layerName: L_ZONES });
             sdk.Map.removeAllFeaturesFromLayer({ layerName: L_POINTS });
         } catch (e) { }
         const feats = [];
+        const autres = trajet ? trajets.filter(x => x !== trajet && x.coords.length > 1) : [];
+        if (autres.length) {
+            sdk.Map.addFeaturesToLayer({ layerName: L_ALT, features: autres.map((x, k) => ({ type: 'Feature', id: 'wrp-alt' + k, geometry: { type: 'LineString', coordinates: x.coords }, properties: {} })) });
+        }
         if (trajet && trajet.coords.length > 1) {
             sdk.Map.addFeatureToLayer({ layerName: L_ROUTE, feature: { type: 'Feature', id: 'wrp-line', geometry: { type: 'LineString', coordinates: trajet.coords }, properties: {} } });
             if (trajet.zones && trajet.zones.length) {
@@ -1370,7 +1454,8 @@
 .wrp-chip:hover { background: #2196f3; border-color: #2196f3; color: #fff; }
 .wrp-btn { display: inline-flex; align-items: center; gap: 5px; height: auto; min-height: 0; padding: 3px 10px; margin: 0;
     border: none; border-radius: 50px; font: 600 11px 'Rubik','Open Sans',sans-serif; cursor: pointer; white-space: nowrap; }
-.wrp-btn-primary { background: #2196f3; color: #fff; }
+/* Pilule pleine #1976d2 : blanc sur #2196f3 ne fait que 3,12:1 (charte, arbitrage du 25/09). */
+.wrp-btn-primary { background: #1976d2; color: #fff; }
 .wrp-btn-neutral { background: #dde3ea; color: #2d3748; }
 .wrp-btn:hover { filter: brightness(1.08); }
 .wrp-btn[hidden] { display: none; }
@@ -1403,6 +1488,25 @@
 .wrp-pz.zone { background: #fff3e0; color: #b23c00; border: 1px solid #ffcc80; }
 .wrp-pz.eviter { background: #ffebee; color: #c62828; border: 1px solid #ef9a9a; }
 .wrp-pz.info { background: #eceff1; color: #455a64; }
+.wrp-pz.ok { background: #e8f5e9; color: #1b5e20; border: 1px solid #a5d6a7; }
+.wrp-chip[hidden] { display: none; }
+.wrp-chip.on { background: #e3f2fd; border-color: #1565c0; }
+.wrp-alts { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 6px; }
+.wrp-alts[hidden] { display: none; }
+.wrp-alt { min-width: 0; max-width: 100%; min-height: 0; padding: 2px 9px; margin: 0; border: 1px solid #dde3ea; border-radius: 50px; background: #fff;
+    color: #2d3748; font: 11px 'Rubik','Open Sans',sans-serif; cursor: pointer; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.wrp-alt:hover { border-color: #2196f3; }
+.wrp-alt.on { background: #e3f2fd; border-color: #1565c0; color: #1565c0; font-weight: 600; }
+.wrp-note { display: flex; align-items: flex-start; gap: 6px; margin-top: 6px; padding: 6px 8px; border: 1px solid #90caf9; border-radius: 8px;
+    background: #e3f2fd; color: #0d47a1; font-size: 11px; line-height: 1.45; }
+.wrp-note[hidden] { display: none; }
+.wrp-diff { padding: 0 6px; border-radius: 50px; font-size: 10px; font-weight: 700; line-height: 16px; }
+.wrp-diff.mod { background: #fb8c00; color: #000; }
+.wrp-diff.new { background: #66bb6a; color: #000; }
+.wrp-actions { display: flex; justify-content: flex-end; padding: 0 10px 6px; }
+.wrp-refs { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 4px; }
+.wrp-refs li { display: flex; align-items: center; gap: 6px; min-width: 0; font-size: 11px; }
+.wrp-ref-txt { flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 #wrp-corps { flex: 1; min-height: 0; overflow-y: auto; background: #fff; }
 #wrp-corps:has(.wrp-list) { background: #000; }
 #wrp-corps.wrp-encalcul { opacity: .45; pointer-events: none; }
@@ -1577,6 +1681,7 @@ button.wrp-drapeau:hover { background: #eef4fb; border-color: #2196f3; }
             '<option value="">' + esc(t('voiceAuto')) + '</option>' +
             VOIX.map(v => '<option value="' + v + '"' + (opts.voix === v ? ' selected' : '') + '>' + v + '</option>').join('') + '</select></label>' +
             '<p class="wrp-hint">' + esc(t('voiceHint')) + '</p>' +
+            '<div class="wrp-sec">&#x1F4CC; ' + esc(t('secRefs')) + '</div><p class="wrp-hint">' + esc(t('refsHint')) + '</p><div id="wrp-refs"></div>' +
             '<div class="wrp-sec">&#x2753; ' + esc(t('sbHelp')) + '</div>' +
             aide.map((x, i) => '<div class="wrp-help-section"><button type="button" class="wrp-help-hdr' + (i ? '' : ' on') + '" data-aide="' + i + '" aria-expanded="' + !i + '">' +
                 esc(x.t) + ' <span>' + (i ? '&#x25B6;' : '&#x25BC;') + '</span></button><div class="wrp-help-body" data-corps="' + i + '"' + (i ? ' hidden' : '') + '>' + x.b + '</div></div>').join('') +
@@ -1589,6 +1694,10 @@ button.wrp-drapeau:hover { background: #eef4fb; border-color: #2196f3; }
             const act = ev.target.closest('[data-act]');
             if (act && act.dataset.act === 'open') ouvrirFenetre(true);
             else if (act && act.dataset.act === 'maj') { ev.preventDefault(); ouvrirMaj(); }
+            const r = ev.target.closest('[data-ref]');
+            if (r) { rouvrirRef(Number(r.dataset.ref)); return; }
+            const rx = ev.target.closest('[data-refx]');
+            if (rx) { supprimerRef(Number(rx.dataset.refx)); return; }
             const h = ev.target.closest('[data-aide]');
             if (!h) return;
             const corps = paneEl.querySelector('[data-corps="' + h.dataset.aide + '"]');
@@ -1607,6 +1716,7 @@ button.wrp-drapeau:hover { background: #eef4fb; border-color: #2196f3; }
             if (c.dataset.opt === 'voix') { arreterLecture(); rendreTrajet(); }
         });
         majRendre();
+        majRefsOnglet();
     }
 
     // =====================================================================
@@ -1689,12 +1799,16 @@ button.wrp-drapeau:hover { background: #eef4fb; border-color: #2196f3; }
     }
 
     // Poser A ou B, d'où qu'il vienne : le trajet se calcule dès que les deux sont là.
-    function poserPoint(k, p) {
+    // garderVirage : seul le test d'un virage pose ses points sans oublier le virage testé.
+    function poserPoint(k, p, garderVirage) {
         pts[k] = p;
+        if (!garderVirage) virageTeste = null;
+        masqueParFermeture = false;
+        appliquerVisibilite();
         rafraichirPoints();
         dessiner();
         if (pts.A && pts.B) calculer();
-        else { generation++; finCalcul(); derniereErreur = null; trajet = null; rendreTrajet(); dessiner(); statut(''); }
+        else { generation++; finCalcul(); derniereErreur = null; trajet = null; trajets = []; rendreTrajet(); dessiner(); statut(''); }
     }
 
     function effacer() {
@@ -1704,6 +1818,9 @@ button.wrp-drapeau:hover { background: #eef4fb; border-color: #2196f3; }
         arreterLecture();
         pts = { A: null, B: null };
         trajet = null;
+        trajets = [];
+        virageTeste = null;
+        noteEnreg = '';
         clearTimeout(flashTimer);
         try { sdk.Map.removeAllFeaturesFromLayer({ layerName: L_FLASH }); } catch (e) { }
         rafraichirPoints();
@@ -1757,11 +1874,14 @@ button.wrp-drapeau:hover { background: #eef4fb; border-color: #2196f3; }
         if (corps) corps.classList.add('wrp-encalcul');
         if (!trajet) rendreTrajet();
         statut(t('busy'));
-        let r = null, err = null;
-        try { r = analyser(await demanderTrajet(pts.A, pts.B)); } catch (e) { err = e; }
+        let tous = [], err = null;
+        try { tous = analyserTous(await demanderTrajet(pts.A, pts.B)); } catch (e) { err = e; }
         if (moi !== generation) return;
         finCalcul();
-        trajet = r;
+        trajets = tous;
+        choixAlt = choixSelonReference(tous);
+        trajet = tous[choixAlt] || null;
+        if (trajet && masqueParFermeture) { masqueParFermeture = false; appliquerVisibilite(); }
         if (trajet && !calquesVisibles) basculerCalques(true);
         derniereErreur = err ? messageErreur(err) : null;
         if (err) log('calcul : ' + (err.message || err));
@@ -1770,7 +1890,8 @@ button.wrp-drapeau:hover { background: #eef4fb; border-color: #2196f3; }
         dessiner();
         statut(derniereErreur || '');
         if (trajet && opts.ouvrirAuCalcul) ouvrirFenetre();
-        if (trajet) completerCarrefours(trajet, moi);
+        montrerVirageTeste();
+        if (trajet) trajet.completion = completerCarrefours(trajet, moi);
     }
 
     // =====================================================================
@@ -1780,6 +1901,8 @@ button.wrp-drapeau:hover { background: #eef4fb; border-color: #2196f3; }
     const BAR_ID = 'wrp-bar';
 
     function barreHTML() {
+        const v = virageSelection();
+        if (v) return barreVirageHTML(v);
         let ref = null;
         try { const sel = sdk.Editing.getSelection(); if (sel && sel.ids.length === 1) ref = sel.objectType + ':' + sel.ids[0]; } catch (e) { }
         const chip = k => '<button type="button" class="wrp-chip wrp-drapeau' + (pts[k] && pts[k].ref === ref ? ' pose' : '') +
@@ -1811,7 +1934,7 @@ button.wrp-drapeau:hover { background: #eef4fb; border-color: #2196f3; }
         const entete = document.querySelector('.segment-feature-editor wz-section-header, .venue-feature-editor wz-section-header');
         const existante = document.getElementById(BAR_ID);
         let un = false;
-        try { const sel = sdk.Editing.getSelection(); un = !!sel && sel.ids.length === 1 && (sel.objectType === 'segment' || sel.objectType === 'venue'); } catch (e) { }
+        try { const sel = sdk.Editing.getSelection(); un = !!sel && ((sel.ids.length === 1 && (sel.objectType === 'segment' || sel.objectType === 'venue')) || !!virageSelection()); } catch (e) { }
         if (!entete || !un) { if (existante) existante.remove(); return; }
         if (existante && existante.parentElement === entete.parentElement) { majBarre(); return; }
         if (existante) existante.remove();
@@ -1822,6 +1945,8 @@ button.wrp-drapeau:hover { background: #eef4fb; border-color: #2196f3; }
             if (!b) return;
             if (b.dataset.bar === 'detail') ouvrirFenetre(true);
             else if (b.dataset.bar === 'clear') effacer();
+            else if (b.dataset.bar === 'virage') testerVirage();
+            else if (b.dataset.bar === 'inverser') { virageInverse = !virageInverse; majBarre(); }
             else prendreSelection(b.dataset.bar);
         });
         let ancre = entete;
@@ -1889,8 +2014,11 @@ button.wrp-drapeau:hover { background: #eef4fb; border-color: #2196f3; }
             '<div class="wrp-row"><button type="button" class="wrp-chip" data-act="swap" title="' + esc(t('swap')) + '">&#x21C5;</button>' +
             '<button type="button" class="wrp-chip wrp-croix" data-act="clear" title="' + esc(t('clear')) + '">&#x2715;</button>' +
             '<button type="button" class="wrp-chip" data-act="compute" title="' + esc(t('recompute')) + '">&#x27F3;</button>' +
+            '<button type="button" class="wrp-chip" data-act="pin" hidden>&#x1F4CC;</button>' +
+            '<button type="button" class="wrp-chip" data-act="link" title="' + esc(t('link')) + '" hidden>&#x1F517;</button>' +
             '<button type="button" class="wrp-btn wrp-btn-primary" data-act="playall" hidden>' + esc(t('playAll')) + '</button>' +
-            '<span class="wrp-statut" id="wrp-statut"></span></div><div class="wrp-fiche" id="wrp-fiche" hidden></div>' +
+            '<span class="wrp-statut" id="wrp-statut"></span></div><div class="wrp-alts" id="wrp-alts" hidden></div>' +
+            '<div class="wrp-fiche" id="wrp-fiche" hidden></div><div class="wrp-note" id="wrp-note" hidden></div>' +
             '<details class="wrp-opts" id="wrp-opts"><summary id="wrp-opts-resume"></summary><div id="wrp-opts-corps"></div></details></div>' +
             '<div id="wrp-corps"></div><div id="wrp-resize"></div>';
     }
@@ -1940,6 +2068,8 @@ button.wrp-drapeau:hover { background: #eef4fb; border-color: #2196f3; }
         ovEl.classList.add('open');
         if (!deja) placerFenetre(lireStock(GEOM_KEY, null));
         majFab();
+        masqueParFermeture = false;
+        appliquerVisibilite();
         if (prendreFocus && !deja) {
             retourFocus = document.activeElement;
             const vide = ['A', 'B'].map(k => ovEl.querySelector('[data-lbl="' + k + '"]')).find(e => e && !e.value);
@@ -1952,6 +2082,8 @@ button.wrp-drapeau:hover { background: #eef4fb; border-color: #2196f3; }
         const dedans = ovEl.contains(document.activeElement);
         ovEl.classList.remove('open');
         majFab();
+        masqueParFermeture = true;
+        appliquerVisibilite();
         if (dedans) {
             const cible = retourFocus && document.contains(retourFocus) ? retourFocus : document.getElementById('wrp-fab-btn');
             if (cible) cible.focus();
@@ -2038,8 +2170,14 @@ button.wrp-drapeau:hover { background: #eef4fb; border-color: #2196f3; }
             else if (a === 'compute') calculer();
             else if (a === 'clear') effacer();
             else if (a === 'playall') toutEcouter();
+            else if (a === 'pin') epingler();
+            else if (a === 'link') copierLien();
+            else if (a === 'selseg') selectionnerApproche(Number(act.dataset.i));
+            else if (a === 'note-x') { noteEnreg = ''; majNote(); }
             return;
         }
+        const alt = ev.target.closest('[data-alt]');
+        if (alt) { choisirItineraire(Number(alt.dataset.alt)); return; }
         const ann = ev.target.closest('[data-ann]');
         if (ann) {
             ev.stopPropagation();
@@ -2269,12 +2407,34 @@ button.wrp-drapeau:hover { background: #eef4fb; border-color: #2196f3; }
         if (f.nonRevetu) h += puce('info', t('unpaved'));
         const cf = trajet.carrefours;
         if (cf && (cf.echecs || cf.plafond)) h += puce('eviter', t('junctions', cf.lus, cf.total), t('junctionsTip'));
+        const v = verdictVirage(trajet);
+        if (v) {
+            if (!v.passe) {
+                const autre = trajets.findIndex(x => x !== trajet && (verdictVirage(x) || {}).passe);
+                h += puce('eviter', t('turnNo'), t('turnNoTip') + (autre >= 0 ? ' ' + t('turnNoAlt', autre + 1) : ''));
+            } else h += v.k >= 0 ? puce('ok', t('turnOk', v.k + 1), t('turnOkTip')) : puce('info', t('turnSilent'), t('turnSilentTip'));
+        }
+        const cp = trajet.comparaison;
+        if (cp) {
+            const nMod = cp.lignes.filter(l => l.etat === 'modifiee').length, nNou = cp.lignes.filter(l => l.etat === 'nouvelle').length;
+            const nDis = cp.disparues.length, d = dateCourte(cp.ref.t);
+            const avant = dureeTexte(cp.ref.secondes), apres = dureeTexte(trajet.secondes);
+            const bouts = [t('refTime', avant, apres), t('refDist', distTexte(cp.ref.metres), distTexte(trajet.metres))];
+            if (nDis) bouts.push(t('refGone', cp.disparues.map(y => y.txt || y.op).join(' ; ')));
+            if (!cp.memesOptions) bouts.push(t('refOtherOpts'));
+            const pareil = !nMod && !nNou && !nDis;
+            h += puce(pareil ? 'ok' : 'zone', (pareil ? t('refSame', d) : t('refDiff', d, nMod, nNou, nDis)) + (avant !== apres ? ' · ' + avant + ' → ' + apres : ''),
+                (pareil ? t('refTipSame') + ' ' : '') + bouts.join(' · '));
+        }
         e.innerHTML = h;
         e.hidden = !h;
     }
 
     function majResume() {
         majFiche();
+        majItineraires();
+        majNote();
+        majPuces();
         const e = ovEl && ovEl.querySelector('#wrp-statut');
         if (!e) return;
         e.innerHTML = dernierStatut ? esc(dernierStatut)
@@ -2309,14 +2469,20 @@ button.wrp-drapeau:hover { background: #eef4fb; border-color: #2196f3; }
             }
         }
         const taille = deplie ? 54 : 44;
+        const c = trajet.comparaison && trajet.comparaison.lignes[i];
+        const diff = !c || c.etat === 'identique' ? ''
+            : c.etat === 'nouvelle' ? '<span class="wrp-diff new" title="' + esc(t('diffNewTip')) + '">' + esc(t('diffNew')) + '</span>'
+            : '<span class="wrp-diff mod" title="' + esc(texteAvant(c)) + '">' + esc(t('diffMod')) + '</span>';
+        const actions = deplie ? '<div class="wrp-actions"><button type="button" class="wrp-btn wrp-btn-neutral" data-act="selseg" data-i="' + i + '" title="' +
+            esc(t('selSegTip')) + '">&#x2316; ' + esc(t('selSeg')) + '</button></div>' : '';
         return voies + '<div class="wrp-ligne">' +
             '<span class="wrp-fl" style="width:' + taille + 'px;height:' + taille + 'px"><span class="wrp-num">' + (i + 1) + '</span>' + icone(m, taille, '#ffffff', ANNEAU_SOMBRE) + '</span>' +
             '<span class="wrp-txt"><span class="wrp-l0"><b>' + esc(distAppli(dist == null ? m.troncon : dist)) + '</b>' +
-            (m.perso ? '<span class="wrp-perso" title="' + esc(t('custom')) + '">&#x270E;</span>' : '') +
+            (m.perso ? '<span class="wrp-perso" title="' + esc(t('custom')) + '">&#x270E;</span>' : '') + diff +
             '<span class="wrp-nb-sorties">' + L.sorties + '</span></span>' +
             (L.l1 ? '<span class="wrp-l1">' + L.l1 + '</span>' : '') +
             (L.l2 ? '<span class="wrp-l2">' + L.l2 + '</span>' : '') +
-            (puces ? '<span class="wrp-anns">&#x1F50A; ' + puces + '</span>' : '') + '</span></div>' + puis;
+            (puces ? '<span class="wrp-anns">&#x1F50A; ' + puces + '</span>' : '') + '</span></div>' + puis + actions;
     }
 
     function rendreTrajet() {
@@ -2332,6 +2498,8 @@ button.wrp-drapeau:hover { background: #eef4fb; border-color: #2196f3; }
             return;
         }
         btn.hidden = false;
+        trajet.comparaison = comparerRef(trajet);
+        majFiche();
         corps.innerHTML = '<ol class="wrp-list">' + trajet.manoeuvres.map((m, i) =>
             '<li data-i="' + i + '" tabindex="0" title="' + esc(verbe(m)) + '">' + ligneHTML(i, false) + '</li>').join('') + '</ol>';
         montrer(0);
@@ -2385,6 +2553,382 @@ button.wrp-drapeau:hover { background: #eef4fb; border-color: #2196f3; }
     }
 
     // =====================================================================
+    //  Itinéraires, virage testé, sélection, référence (avant / après), lien
+    // =====================================================================
+
+    // ---- Autres itinéraires ------------------------------------------------------------------------
+    // Demandés au serveur (nPaths=3 : 4 rendus le 27/09/2026 sur Uzès → Nîmes, le premier marqué « Best »),
+    // gardés dans SON ordre : le premier est celui que l'appli propose d'office.
+    function analyserTous(j) {
+        const n = Array.isArray(j.alternatives) ? j.alternatives.length : 1;
+        const tous = [analyser(j, 0)];
+        for (let k = 1; k < n; k++) {
+            try { tous.push(analyser(j, k)); } catch (e) { log('itinéraire ' + (k + 1) + ' : ' + e.message); }
+        }
+        return tous;
+    }
+
+    function majItineraires() {
+        const e = ovEl && ovEl.querySelector('#wrp-alts');
+        if (!e) return;
+        if (!trajet || trajets.length < 2) { e.hidden = true; e.innerHTML = ''; return; }
+        e.innerHTML = trajets.map((x, k) => '<button type="button" class="wrp-alt' + (x === trajet ? ' on' : '') + '" data-alt="' + k +
+            '" aria-pressed="' + (x === trajet) + '" title="' + esc(t('altTip', k + 1)) + '"><b>' + esc(dureeTexte(x.secondes)) + '</b> · ' +
+            esc(distTexte(x.metres)) + (x.fiche && x.fiche.via ? ' · ' + esc(x.fiche.via) : '') + '</button>').join('');
+        e.hidden = false;
+    }
+
+    function choisirItineraire(k) {
+        if (!trajets[k] || trajets[k] === trajet) return;
+        arreterLecture();
+        choixAlt = k;
+        trajet = trajets[k];
+        rendreTrajet();
+        dessiner();
+        statut('');
+        montrerVirageTeste();
+        if (!trajet.completion) trajet.completion = completerCarrefours(trajet, generation);
+    }
+
+    // ---- Sélectionner dans WME ce qu'une ligne décrit ----------------------------------------------
+    // Le segment d'APPROCHE : il porte les voies, et ses flèches de virage mènent à l'instruction
+    // personnalisée. ⛔ Aucun clic sur une flèche : un clic BASCULE le virage (vécu, cf. mémoire SDK).
+    // setSelection n'ajoute aucune action. Hors de la vue, le segment n'est pas chargé : on centre la
+    // carte (zoom 16 au moins, sinon WME ne charge pas les segments), puis on attend qu'il le soit.
+    async function selectionnerApproche(k) {
+        const m = trajet && trajet.manoeuvres[k];
+        if (!m) return;
+        const R = trajet.R, x = R[m.i != null ? m.i : R.length - 1];
+        const id = x && x.path && x.path.segmentId;
+        if (!id) return;
+        const charge = () => { try { return !!sdk.DataModel.Segments.getById({ segmentId: id }); } catch (e) { return false; } };
+        if (!charge()) {
+            let z = 17;
+            try { z = Math.max(16, sdk.Map.getZoomLevel()); } catch (e) { }
+            sdk.Map.setMapCenter({ lonLat: { lon: m.lon, lat: m.lat }, zoomLevel: z });
+            for (let n = 0; n < 40 && !charge(); n++) await new Promise(r => setTimeout(r, 250));
+        } else aller(m);
+        if (!charge()) { statutPassager(t('selAbsent')); return; }
+        try { sdk.Editing.setSelection({ selection: { ids: [id], objectType: 'segment' } }); }
+        catch (e) { statutPassager(t('selAbsent')); log('sélection : ' + e.message); }
+    }
+
+    // ---- Tester un virage ----------------------------------------------------------------------------
+    // Deux segments sélectionnés qui se touchent par UN nœud : départ sur le premier, arrivée sur le
+    // second, chacun à mi-longueur (150 m au plus du nœud). Deux nœuds communs (boucle) : sens ambigu, refusé.
+    let virageInverse = false, virageCle = '';
+    function virageSelection() {
+        let sel;
+        try { sel = sdk.Editing.getSelection(); } catch (e) { return null; }
+        if (!sel || sel.objectType !== 'segment' || !sel.ids || sel.ids.length !== 2) return null;
+        let s1, s2;
+        try { [s1, s2] = sel.ids.map(id => sdk.DataModel.Segments.getById({ segmentId: id })); } catch (e) { return null; }
+        if (!s1 || !s2) return null;
+        const communs = [s1.fromNodeId, s1.toNodeId].filter(n => n != null && (n === s2.fromNodeId || n === s2.toNodeId));
+        if (communs.length !== 1) return null;
+        const cle = sel.ids.join('>');
+        if (cle !== virageCle) { virageCle = cle; virageInverse = false; }
+        return virageInverse ? { de: s2, vers: s1, noeud: communs[0] } : { de: s1, vers: s2, noeud: communs[0] };
+    }
+
+    function barreVirageHTML(v) {
+        const nom = s => nomRue(s.primaryStreetId) || t('unnamed');
+        const teste = virageTeste && virageTeste.de === v.de.id && virageTeste.vers === v.vers.id && trajet ? verdictVirage(trajet) : null;
+        const signe = !teste ? '' : '<span class="wrp-pz ' + (!teste.passe ? 'eviter' : teste.k >= 0 ? 'ok' : 'info') + '">' +
+            (teste.passe ? '&#x2714;' : '&#x2718;') + '</span>';
+        return '<span class="wrp-bar-lbl" title="' + SCRIPT_NAME + '">' + esc(t('turnLbl')) + '</span>' +
+            '<span class="wrp-bar-txt" title="' + esc(nom(v.de) + ' → ' + nom(v.vers)) + '">' + esc(nom(v.de)) + ' → ' + esc(nom(v.vers)) + '</span>' + signe +
+            '<button type="button" class="wrp-chip" data-bar="inverser" title="' + esc(t('turnSwap')) + '">&#x21C5;</button>' +
+            '<button type="button" class="wrp-btn wrp-btn-neutral" data-bar="virage" title="' + esc(t('turnTestTip')) + '">' + esc(t('turnTest')) + '</button>';
+    }
+
+    // Le point à d mètres du nœud en remontant le segment (d = mi-longueur, 150 m au plus).
+    function pointPresDuNoeud(s, noeud) {
+        const c = s.toNodeId === noeud ? s.geometry.coordinates.slice().reverse() : s.geometry.coordinates.slice();
+        let total = 0;
+        for (let i = 1; i < c.length; i++) total += metres(c[i - 1], c[i]);
+        let reste = Math.min(total / 2, 150);
+        for (let i = 1; i < c.length; i++) {
+            const d = metres(c[i - 1], c[i]);
+            if (reste <= d && d > 0) {
+                const u = reste / d;
+                return [c[i - 1][0] + u * (c[i][0] - c[i - 1][0]), c[i - 1][1] + u * (c[i][1] - c[i - 1][1])];
+            }
+            reste -= d;
+        }
+        return c[c.length - 1];
+    }
+
+    function testerVirage() {
+        const v = virageSelection();
+        if (!v) { statutPassager(t('turnBadSel')); return; }
+        const a = pointPresDuNoeud(v.de, v.noeud), b = pointPresDuNoeud(v.vers, v.noeud);
+        pts.A = { lon: a[0], lat: a[1], label: t('segLabel', nomRue(v.de.primaryStreetId), v.de.id), ref: 'segment:' + v.de.id };
+        virageTeste = { de: v.de.id, vers: v.vers.id };
+        poserPoint('B', { lon: b[0], lat: b[1], label: t('segLabel', nomRue(v.vers.primaryStreetId), v.vers.id), ref: 'segment:' + v.vers.id }, true);
+    }
+
+    // Le trajet prend-il le virage ? k = la ligne de son instruction, -1 s'il le prend sans rien dire.
+    function verdictVirage(tr) {
+        if (!virageTeste || !tr || !tr.R) return null;
+        const R = tr.R;
+        for (let i = 0; i + 1 < R.length; i++) {
+            if (R[i].path.segmentId === virageTeste.de && R[i + 1].path.segmentId === virageTeste.vers) {
+                return { passe: true, k: tr.manoeuvres.findIndex(m => m.i === i) };
+            }
+        }
+        return { passe: false, k: -1 };
+    }
+
+    function montrerVirageTeste() {
+        const v = verdictVirage(trajet);
+        if (v && v.k >= 0) montrer(v.k);
+        majBarre();
+    }
+
+    // ---- Référence : avant / après une modification ----------------------------------------------------
+    // Le calcul de Waze se fait sur la carte PUBLIÉE : une modification ne l'atteint qu'après la mise à
+    // jour de cette carte par Waze (délai fixé par Waze, NON mesuré). D'où une référence gardée dans le
+    // navigateur, à laquelle chaque calcul entre les mêmes départ et arrivée est comparé, même des jours
+    // plus tard. À l'enregistrement dans WME, le trajet affiché (calculé AVANT) est gardé d'office.
+    const REFS_KEY = 'wrp.refs', REFS_MAX = 10, MEME_POINT_M = 15, APPARIER_M = 25;
+    const lireRefs = () => { const l = lireStock(REFS_KEY, []); return Array.isArray(l) ? l.filter(r => r && r.A && r.B && Array.isArray(r.l)) : []; };
+    const optsCalcul = () => ({ vehicule: opts.vehicule, eviter: opts.eviter.slice().sort(), bitume: opts.bitume, intersections: !!opts.intersections, pass: passActifs().slice().sort() });
+    const memesPoints = (r, A, B) => metres([r.A.lon, r.A.lat], [A.lon, A.lat]) < MEME_POINT_M && metres([r.B.lon, r.B.lat], [B.lon, B.lat]) < MEME_POINT_M;
+    const refPour = (A, B) => A && B ? lireRefs().find(r => memesPoints(r, A, B)) || null : null;
+    const dateCourte = ms => new Intl.DateTimeFormat(_lang, { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }).format(ms);
+    const heureCourte = ms => new Intl.DateTimeFormat(_lang, { hour: '2-digit', minute: '2-digit' }).format(ms);
+    // \x22 et non un guillemet dans les expressions : tools/check-idents.js lirait sinon une chaîne.
+    const texteBrut = html => String(html || '').replace(/<img[^>]*alt=[\x22]([^\x22]*)[\x22][^>]*>/g, '[$1]').replace(/<[^>]+>/g, ' ')
+        .replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '\x22').replace(/&#?\w+;/g, ' ').replace(/\s+/g, ' ').trim();
+
+    // Ce qu'on compare d'une ligne : l'instruction, ce que l'écran montre, les voies, ✎ et le texte vocal
+    // personnalisé. Pas la phrase dite, qui dépend de la voix choisie.
+    function empreinte(tr) {
+        return tr.manoeuvres.map(m => {
+            const L = lignes(m, 18, true);
+            return {
+                op: m.op, arg: m.arg || 0, lon: +m.lon.toFixed(6), lat: +m.lat.toFixed(6),
+                txt: [texteBrut(L.l1), texteBrut(L.l2), texteBrut(L.sorties)].filter(x => x).join(' · '),
+                voies: m.voies ? m.voies.map(v => v.map(x => x.a + (x.sel ? '*' : '')).join('/')).join('|') : '',
+                perso: !!m.perso, tts: (m.perso && m.tg && m.tg.tts) || '',
+            };
+        });
+    }
+
+    // Chaque ligne est appariée à la ligne de la référence la plus proche (25 m) encore libre.
+    function comparerAvec(ref, tr) {
+        const avant = ref.l, pris = new Set();
+        const res = empreinte(tr).map(x => {
+            let j = -1, dmin = APPARIER_M;
+            avant.forEach((y, n) => {
+                if (pris.has(n)) return;
+                const d = metres([x.lon, x.lat], [y.lon, y.lat]);
+                if (d < dmin) { dmin = d; j = n; }
+            });
+            if (j < 0) return { etat: 'nouvelle' };
+            pris.add(j);
+            const y = avant[j], ecarts = [];
+            if (x.op !== y.op || x.arg !== y.arg) ecarts.push('op');
+            if (x.txt !== y.txt) ecarts.push('txt');
+            if (x.voies !== y.voies) ecarts.push('voies');
+            if (x.perso !== y.perso) ecarts.push('perso');
+            if (x.tts !== y.tts) ecarts.push('tts');
+            return ecarts.length ? { etat: 'modifiee', avant: y, ecarts } : { etat: 'identique' };
+        });
+        return { ref, lignes: res, disparues: avant.filter((y, n) => !pris.has(n)), memesOptions: JSON.stringify(ref.o) === JSON.stringify(optsCalcul()) };
+    }
+    const comparerRef = tr => { const r = tr && refPour(pts.A, pts.B); return r ? comparerAvec(r, tr) : null; };
+
+    // Avec une référence, l'itinéraire montré d'office est celui qui lui ressemble le plus (le serveur
+    // peut changer l'ordre d'un jour à l'autre) ; sans référence, le premier.
+    function choixSelonReference(tous) {
+        const ref = refPour(pts.A, pts.B);
+        if (!ref || tous.length < 2) return 0;
+        let choix = 0, mieux = Infinity;
+        tous.forEach((x, k) => {
+            const c = comparerAvec(ref, x);
+            const ecart = c.disparues.length + c.lignes.filter(l => l.etat !== 'identique').length;
+            if (ecart < mieux) { mieux = ecart; choix = k; }
+        });
+        return choix;
+    }
+
+    function texteAvant(c) {
+        const y = c.avant, b = [];
+        if (c.ecarts.includes('op') || c.ecarts.includes('txt')) b.push(y.txt || y.op);
+        if (c.ecarts.includes('voies')) b.push(t('dLanes'));
+        if (c.ecarts.includes('perso')) b.push(t(y.perso ? 'dPersoOff' : 'dPersoOn'));
+        if (c.ecarts.includes('tts') && y.tts) b.push(t('dVoice', y.tts));
+        return t('diffBefore') + '\u00a0: ' + b.join(' · ');
+    }
+
+    // Les voies des carrefours hors de la vue arrivent après l'affichage : la référence les attend,
+    // sinon le calcul suivant les verrait « modifiées ».
+    async function epingler(silencieux) {
+        const tr = trajet;
+        if (!tr || !pts.A || !pts.B) return;
+        try { await tr.completion; } catch (e) { }
+        if (tr !== trajet) return;
+        const pt = x => ({ lon: x.lon, lat: x.lat, label: x.label });
+        const refs = lireRefs().filter(r => !memesPoints(r, pts.A, pts.B));
+        refs.unshift({ t: Date.now(), A: pt(pts.A), B: pt(pts.B), o: optsCalcul(), metres: tr.metres, secondes: tr.secondes, via: tr.fiche.via, l: empreinte(tr) });
+        ecrireStock(REFS_KEY, refs.slice(0, REFS_MAX));
+        rendreTrajet();
+        majRefsOnglet();
+        if (!silencieux) statutPassager(t('pinDone'));
+    }
+
+    function majPuces() {
+        const pin = ovEl && ovEl.querySelector('[data-act="pin"]');
+        const lien = ovEl && ovEl.querySelector('[data-act="link"]');
+        if (lien) lien.hidden = !(pts.A && pts.B);
+        if (!pin) return;
+        pin.hidden = !trajet;
+        const r = trajet && refPour(pts.A, pts.B);
+        pin.classList.toggle('on', !!r);
+        pin.title = r ? t('pinReplace', dateCourte(r.t)) : t('pinTip');
+    }
+
+    let noteEnreg = '';
+    function majNote() {
+        const e = ovEl && ovEl.querySelector('#wrp-note');
+        if (!e) return;
+        e.hidden = !noteEnreg;
+        e.innerHTML = noteEnreg ? '<span>' + esc(noteEnreg) + '</span><button type="button" class="wrp-chip wrp-croix" data-act="note-x" title="' + esc(t('close')) + '">&#x2715;</button>' : '';
+    }
+
+    // wme-save-finished rend {success} (lu dans le code de WME le 27/09/2026 : save:success / save:failure).
+    function surEnregistrement(e) {
+        if (!e || !e.success || !trajet || !pts.A || !pts.B) return;
+        const deja = refPour(pts.A, pts.B);
+        noteEnreg = t(deja ? 'savedHasRef' : 'savedRef', heureCourte(Date.now()));
+        if (!deja) epingler(true);
+        majNote();
+    }
+
+    function majRefsOnglet() {
+        const e = paneEl && paneEl.querySelector('#wrp-refs');
+        if (!e) return;
+        const refs = lireRefs();
+        e.innerHTML = refs.length ? '<ul class="wrp-refs">' + refs.map((r, k) => '<li><span class="wrp-ref-txt" title="' + esc(r.A.label + ' → ' + r.B.label) + '"><b>' +
+            esc(dateCourte(r.t)) + '</b> · ' + esc(r.A.label) + ' → ' + esc(r.B.label) + '</span>' +
+            '<button type="button" class="wrp-btn wrp-btn-neutral" data-ref="' + k + '">' + esc(t('refOpen')) + '</button>' +
+            '<button type="button" class="wrp-chip wrp-croix" data-refx="' + k + '" title="' + esc(t('refDel')) + '">&#x2715;</button></li>').join('') + '</ul>'
+            : '<p class="wrp-hint">' + esc(t('refsNone')) + '</p>';
+    }
+
+    // Rouvrir une référence reprend ses options : sinon la comparaison mêlerait deux calculs différents.
+    // Comme pour un lien, elles valent pour ce trajet et ne sont PAS enregistrées : les réglages de l'éditeur
+    // ne changent que par le volet des options (la 0.15.00 les écrasait).
+    function rouvrirRef(k) {
+        const r = lireRefs()[k];
+        if (!r) return;
+        if (r.o) {
+            if (VEHICULES.includes(r.o.vehicule)) opts.vehicule = r.o.vehicule;
+            if (Array.isArray(r.o.eviter)) opts.eviter = r.o.eviter.filter(x => EVITER.some(e => e.id === x));
+            if (['interdire', 'longues', 'autoriser'].includes(r.o.bitume)) opts.bitume = r.o.bitume;
+            opts.intersections = !!r.o.intersections;
+            if (Array.isArray(r.o.pass)) opts.pass = r.o.pass.slice();
+            majOptions(true);
+        }
+        try { sdk.Map.setMapCenter({ lonLat: { lon: (r.A.lon + r.B.lon) / 2, lat: (r.A.lat + r.B.lat) / 2 } }); } catch (e) { }
+        pts.A = Object.assign({}, r.A);
+        poserPoint('B', Object.assign({}, r.B));
+        ouvrirFenetre(true);
+    }
+
+    function supprimerRef(k) {
+        const refs = lireRefs();
+        refs.splice(k, 1);
+        ecrireStock(REFS_KEY, refs);
+        majRefsOnglet();
+        if (trajet) rendreTrajet();
+    }
+
+    // ---- Lien à partager --------------------------------------------------------------------------------
+    // Le trajet voyage dans l'adresse de WME : `wrp=lonA,latA~lonB,latB` y survit au démarrage (mesuré le
+    // 27/09/2026), avec les options en paramètres voisins (un pass par `wrpp`). Départ : maintenant (une
+    // heure n'a de sens que pour celui qui l'a choisie).
+    // 🔴 On ne peut PAS retirer ces paramètres de l'adresse : WME en garde des copies internes
+    // (W.app._urlParams et d'autres) et les y remet à chaque sélection (mesuré le 27/09). Le lien est donc lu
+    // UNE fois par onglet (sessionStorage survit au rechargement, pas à un nouvel onglet) : recharger la page
+    // ne relance pas le calcul et ne réimpose pas ses options.
+    const LIEN_LU_KEY = 'wrp.lienLu';
+    function lienTrajet() {
+        const f = x => x.toFixed(6);
+        const ici = new URLSearchParams(location.search), u = new URL(location.origin + location.pathname);
+        if (ici.get('env')) u.searchParams.set('env', ici.get('env'));
+        u.searchParams.set('lat', f((pts.A.lat + pts.B.lat) / 2));
+        u.searchParams.set('lon', f((pts.A.lon + pts.B.lon) / 2));
+        let z = 16;
+        try { z = sdk.Map.getZoomLevel(); } catch (e) { }
+        u.searchParams.set('zoomLevel', String(z));
+        u.searchParams.set('wrp', f(pts.A.lon) + ',' + f(pts.A.lat) + '~' + f(pts.B.lon) + ',' + f(pts.B.lat));
+        u.searchParams.set('wrpv', opts.vehicule);
+        u.searchParams.set('wrpe', opts.eviter.join(','));
+        u.searchParams.set('wrpb', opts.bitume);
+        u.searchParams.set('wrpi', opts.intersections ? '1' : '0');
+        for (const id of passActifs()) u.searchParams.append('wrpp', id);
+        return u.toString();
+    }
+
+    async function copierLien() {
+        if (!pts.A || !pts.B) { statutPassager(t('needAB')); return; }
+        const l = lienTrajet();
+        let ok = false;
+        try { await navigator.clipboard.writeText(l); ok = true; } catch (e) { }
+        if (!ok) {
+            const ta = document.createElement('textarea');
+            ta.value = l;
+            ta.style.cssText = 'position:fixed;top:0;left:0;opacity:0';
+            document.body.appendChild(ta);
+            ta.select();
+            try { ok = document.execCommand('copy'); } catch (e) { }
+            ta.remove();
+        }
+        if (!ok) log('lien : ' + l);
+        statutPassager(t(ok ? 'linkCopied' : 'linkFail'));
+    }
+
+    async function lireLien() {
+        let q;
+        try { q = new URLSearchParams(location.search); } catch (e) { return; }
+        const v = q.get('wrp');
+        if (v == null) return;
+        const o = { v: q.get('wrpv'), e: q.get('wrpe'), b: q.get('wrpb'), i: q.get('wrpi'), p: q.getAll('wrpp') };
+        const empreinteLien = v + '|' + JSON.stringify(o);
+        try {
+            if (sessionStorage.getItem(LIEN_LU_KEY) === empreinteLien) return;
+            sessionStorage.setItem(LIEN_LU_KEY, empreinteLien);
+        } catch (e) { }
+        const m = /^(-?\d{1,3}(?:\.\d+)?),(-?\d{1,2}(?:\.\d+)?)~(-?\d{1,3}(?:\.\d+)?),(-?\d{1,2}(?:\.\d+)?)$/.exec(v);
+        if (!m) { log('lien illisible : ' + v); return; }
+        const [lonA, latA, lonB, latB] = m.slice(1).map(Number);
+        if (Math.abs(lonA) > 180 || Math.abs(lonB) > 180 || Math.abs(latA) > 90 || Math.abs(latB) > 90) return;
+        if (VEHICULES.includes(o.v)) opts.vehicule = o.v;
+        if (o.e != null) opts.eviter = o.e.split(',').filter(x => EVITER.some(e => e.id === x));
+        if (['interdire', 'longues', 'autoriser'].includes(o.b)) opts.bitume = o.b;
+        if (o.i === '0' || o.i === '1') opts.intersections = o.i === '1';
+        opts.pass = o.p.filter(x => x);
+        // Les options du lien valent pour ce trajet et ne sont pas enregistrées (même règle que rouvrirRef).
+        majOptions(true);
+        // Les instructions personnalisées se lisent dans les données de WME : on attend qu'il en ait chargé.
+        for (let n = 0; n < 40; n++) {
+            let nb2 = 0;
+            try { nb2 = sdk.DataModel.Segments.getAll().length; } catch (e) { }
+            if (nb2) break;
+            await new Promise(r => setTimeout(r, 250));
+        }
+        const lbl = (lat, lon) => t('ptLabel', nb(lat, 5), nb(lon, 5));
+        pts.A = { lon: lonA, lat: latA, label: lbl(latA, lonA) };
+        poserPoint('B', { lon: lonB, lat: latB, label: lbl(latB, lonB) });
+        ouvrirFenetre(false);
+        statutPassager(t('linkIn'));
+    }
+
+
+    // =====================================================================
     //  INIT
     // =====================================================================
 
@@ -2423,10 +2967,12 @@ button.wrp-drapeau:hover { background: #eef4fb; border-color: #2196f3; }
         try {
             sdk.Events.on({ eventName: 'wme-map-mouse-move', eventHandler: e => { curseur = { lon: e.lon, lat: e.lat }; } });
             sdk.Events.on({ eventName: 'wme-selection-changed', eventHandler: planifierPlacement });
+            sdk.Events.on({ eventName: 'wme-save-finished', eventHandler: surEnregistrement });
         } catch (e) { log('événements : ' + e.message); }
         // Le panneau se re-rend aussi sans changement de sélection (onglets, enregistrement).
         new MutationObserver(planifierPlacement).observe(document.getElementById('edit-panel') || document.body, { childList: true, subtree: true });
         planifierPlacement();
+        lireLien();
 
         log('v' + VERSION + ' prêt — langue ' + _lang);
     };

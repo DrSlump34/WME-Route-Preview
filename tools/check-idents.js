@@ -47,7 +47,7 @@ for (const m of src.matchAll(/\(([^()]*)\)\s*=>/g)) params(m[1]).forEach(x => de
 for (const m of src.matchAll(/([A-Za-z_$][\w$]*)\s*=>/g)) declares.add(m[1]);
 const natifs = new Set(['if', 'for', 'while', 'switch', 'catch', 'return', 'function', 'typeof', 'setTimeout', 'clearTimeout', 'setInterval', 'clearInterval', 'Date', 'fetch',
     'requestAnimationFrame', 'parseInt', 'parseFloat', 'String', 'Number', 'Boolean', 'Object', 'Array', 'JSON', 'Math',
-    'Map', 'Set', 'Promise', 'Audio', 'GM_xmlhttpRequest', 'MutationObserver', 'Error', 'isNaN', 'encodeURIComponent', 'await', 'async']);
+    'Map', 'Set', 'Promise', 'Audio', 'GM_xmlhttpRequest', 'MutationObserver', 'Error', 'isNaN', 'encodeURIComponent', 'await', 'async', 'URL', 'URLSearchParams']);
 const absents = new Set();
 for (const m of src.matchAll(/(^|[^.\w$])([a-zA-Z_$][\w$]*)\s*\(/g)) {
     const n = m[2];
