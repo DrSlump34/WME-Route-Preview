@@ -1,5 +1,9 @@
 # WME Route Preview — historique des versions
 
+## 0.15.05
+
+- Champ « Départ » vide alors que le trajet était calculé : la fenêtre ouverte pendant qu'un lien de trajet attendait les données de WME mettait le curseur dans ce champ, et le point posé ensuite n'y était jamais écrit. Seule une saisie en cours protège désormais un champ.
+
 ## 0.15.04
 
 - Mises à jour : le script les cherchait sur la fiche GreasyFork, supprimée (réponse 404) — plus aucune installation n'en recevait. Elles viennent maintenant du dépôt GitHub. Une installation faite depuis GreasyFork doit être refaite une fois depuis le lien du README.

@@ -3,7 +3,7 @@
 // @name:fr      WME Route Preview
 // @icon         data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHdpZHRoPSc2NCcgaGVpZ2h0PSc2NCcgdmlld0JveD0nMCAwIDY0IDY0Jz48ZGVmcz48bGluZWFyR3JhZGllbnQgaWQ9J2cnIHgxPScwJyB5MT0nMCcgeDI9JzAnIHkyPScxJz48c3RvcCBvZmZzZXQ9JzAnIHN0b3AtY29sb3I9JyMxZTliZjAnLz48c3RvcCBvZmZzZXQ9JzEnIHN0b3AtY29sb3I9JyMxNTY1YzAnLz48L2xpbmVhckdyYWRpZW50PjwvZGVmcz48cmVjdCB3aWR0aD0nNjQnIGhlaWdodD0nNjQnIHJ4PScxNCcgZmlsbD0ndXJsKCNnKScvPjxwYXRoIGQ9J00xNSA1NSBWMzQgUTE1IDI1IDI0IDI1IEgzMScgZmlsbD0nbm9uZScgc3Ryb2tlPScjZmZmJyBzdHJva2Utd2lkdGg9JzknIHN0cm9rZS1saW5lY2FwPSdyb3VuZCcgc3Ryb2tlLWxpbmVqb2luPSdyb3VuZCcvPjxwYXRoIGQ9J00yOSAxMyBMNDMgMjUgTDI5IDM3IFonIGZpbGw9JyNmZmYnIHN0cm9rZT0nI2ZmZicgc3Ryb2tlLXdpZHRoPSczJyBzdHJva2UtbGluZWpvaW49J3JvdW5kJy8+PHBhdGggZD0nTTM3IDQ3IEg0MiBMNTAgNDAgVjYwIEw0MiA1MyBIMzcgWicgZmlsbD0nI2ZiOGMwMCcgc3Ryb2tlPScjZmI4YzAwJyBzdHJva2Utd2lkdGg9JzEuNScgc3Ryb2tlLWxpbmVqb2luPSdyb3VuZCcvPjxwYXRoIGQ9J001NCA0NCBRNTcuNSA1MCA1NCA1NicgZmlsbD0nbm9uZScgc3Ryb2tlPScjZmI4YzAwJyBzdHJva2Utd2lkdGg9JzMnIHN0cm9rZS1saW5lY2FwPSdyb3VuZCcvPjwvc3ZnPgo=
 // @namespace    https://github.com/DrSlump34
-// @version      0.15.04
+// @version      0.15.05
 // @description  Preview a route in WME the way the Waze app gives it: set a start and a finish (segment, place, search or pointer), then read every instruction as in the app list — road shields, exit signs, lanes, roundabouts — and hear every voice prompt spoken by the real Waze voice, including the custom turn guidance set by editors. Route options as in the app (time, vehicle, avoidances, passes). The script never changes the map.
 // @description:fr Prévisualiser un trajet dans WME comme l'appli Waze le donne : posez un départ et une arrivée (segment, lieu, recherche ou pointeur), puis lisez chaque instruction comme dans la liste de l'appli — écussons, panneaux de sortie, voies, ronds-points — et écoutez chaque annonce dite par la vraie voix de Waze, y compris les instructions personnalisées posées par les éditeurs. Options du calcul comme dans l'appli (heure, véhicule, évitements, pass). Le script ne modifie jamais la carte.
 // @author       DrSlump34
@@ -2204,7 +2204,10 @@ button.wrp-drapeau:hover { background: #eef4fb; border-color: #2196f3; }
         if (!ovEl) return;
         for (const k of ['A', 'B']) {
             const e = ovEl.querySelector('[data-lbl="' + k + '"]');
-            if (document.activeElement !== e) e.value = pts[k] ? pts[k].label : '';
+            // Seule une SAISIE en cours protège le champ, pas le focus seul : la fenêtre ouverte pendant qu'un lien
+            // attendait les données de WME mettait le curseur dans « Départ », encore vide, et le point posé ensuite
+            // n'y était jamais écrit (vu le 05/10/2026).
+            if (document.activeElement !== e || !e.dataset.saisi) { e.value = pts[k] ? pts[k].label : ''; delete e.dataset.saisi; }
             e.title = pts[k] ? pts[k].label : '';
         }
     }
@@ -2280,6 +2283,7 @@ button.wrp-drapeau:hover { background: #eef4fb; border-color: #2196f3; }
             const e = ev.target.closest('[data-lbl]');
             if (!e) return;
             const k = e.dataset.lbl, q = e.value.trim();
+            e.dataset.saisi = '1';
             clearTimeout(rechercheTimer);
             if (q.length < 2) { fermerSugg(k); return; }
             rechercheTimer = setTimeout(() => chercher(k, q), RECHERCHE_MS);
@@ -2302,6 +2306,7 @@ button.wrp-drapeau:hover { background: #eef4fb; border-color: #2196f3; }
             } else if (ev.key === 'Escape') {
                 fermerSugg(k);
                 e.blur();
+                delete e.dataset.saisi;
                 rafraichirPoints();
             }
         });
@@ -2315,7 +2320,7 @@ button.wrp-drapeau:hover { background: #eef4fb; border-color: #2196f3; }
         ovEl.addEventListener('focusout', ev => {
             const e = ev.target.closest && ev.target.closest('[data-lbl]');
             if (!e) return;
-            setTimeout(() => { if (document.activeElement !== e) { fermerSugg(e.dataset.lbl); rafraichirPoints(); } }, 150);
+            setTimeout(() => { if (document.activeElement !== e) { delete e.dataset.saisi; fermerSugg(e.dataset.lbl); rafraichirPoints(); } }, 150);
         });
     }
 
