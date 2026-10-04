@@ -1,5 +1,11 @@
 # WME Route Preview — historique des versions
 
+## 0.15.04
+
+- Mises à jour : le script les cherchait sur la fiche GreasyFork, supprimée (réponse 404) — plus aucune installation n'en recevait. Elles viennent maintenant du dépôt GitHub. Une installation faite depuis GreasyFork doit être refaite une fois depuis le lien du README.
+- Ligne dépliée par une annonce : elle montre la distance de l'annonce (« 40 m » pour « à l'intersection »), comme le compte à rebours de l'appli ; elle dit maintenant aussi la longueur du tronçon (« 40 m · tronçon 21 km »), qu'on croyait remplacée.
+- 📌 ne replie plus la liste sur la première ligne : celle qu'on regardait reste dépliée.
+
 ## 0.15.03
 
 - Démarrage à tous les zooms : le script (bouton de carte, onglet) n'attendait que les zooms éditables de WME ; il démarre maintenant dès que le SDK est prêt, même la carte vue de loin.

@@ -3,7 +3,7 @@
 // @name:fr      WME Route Preview
 // @icon         data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHdpZHRoPSc2NCcgaGVpZ2h0PSc2NCcgdmlld0JveD0nMCAwIDY0IDY0Jz48ZGVmcz48bGluZWFyR3JhZGllbnQgaWQ9J2cnIHgxPScwJyB5MT0nMCcgeDI9JzAnIHkyPScxJz48c3RvcCBvZmZzZXQ9JzAnIHN0b3AtY29sb3I9JyMxZTliZjAnLz48c3RvcCBvZmZzZXQ9JzEnIHN0b3AtY29sb3I9JyMxNTY1YzAnLz48L2xpbmVhckdyYWRpZW50PjwvZGVmcz48cmVjdCB3aWR0aD0nNjQnIGhlaWdodD0nNjQnIHJ4PScxNCcgZmlsbD0ndXJsKCNnKScvPjxwYXRoIGQ9J00xNSA1NSBWMzQgUTE1IDI1IDI0IDI1IEgzMScgZmlsbD0nbm9uZScgc3Ryb2tlPScjZmZmJyBzdHJva2Utd2lkdGg9JzknIHN0cm9rZS1saW5lY2FwPSdyb3VuZCcgc3Ryb2tlLWxpbmVqb2luPSdyb3VuZCcvPjxwYXRoIGQ9J00yOSAxMyBMNDMgMjUgTDI5IDM3IFonIGZpbGw9JyNmZmYnIHN0cm9rZT0nI2ZmZicgc3Ryb2tlLXdpZHRoPSczJyBzdHJva2UtbGluZWpvaW49J3JvdW5kJy8+PHBhdGggZD0nTTM3IDQ3IEg0MiBMNTAgNDAgVjYwIEw0MiA1MyBIMzcgWicgZmlsbD0nI2ZiOGMwMCcgc3Ryb2tlPScjZmI4YzAwJyBzdHJva2Utd2lkdGg9JzEuNScgc3Ryb2tlLWxpbmVqb2luPSdyb3VuZCcvPjxwYXRoIGQ9J001NCA0NCBRNTcuNSA1MCA1NCA1NicgZmlsbD0nbm9uZScgc3Ryb2tlPScjZmI4YzAwJyBzdHJva2Utd2lkdGg9JzMnIHN0cm9rZS1saW5lY2FwPSdyb3VuZCcvPjwvc3ZnPgo=
 // @namespace    https://github.com/DrSlump34
-// @version      0.15.03
+// @version      0.15.04
 // @description  Preview a route in WME the way the Waze app gives it: set a start and a finish (segment, place, search or pointer), then read every instruction as in the app list — road shields, exit signs, lanes, roundabouts — and hear every voice prompt spoken by the real Waze voice, including the custom turn guidance set by editors. Route options as in the app (time, vehicle, avoidances, passes). The script never changes the map.
 // @description:fr Prévisualiser un trajet dans WME comme l'appli Waze le donne : posez un départ et une arrivée (segment, lieu, recherche ou pointeur), puis lisez chaque instruction comme dans la liste de l'appli — écussons, panneaux de sortie, voies, ronds-points — et écoutez chaque annonce dite par la vraie voix de Waze, y compris les instructions personnalisées posées par les éditeurs. Options du calcul comme dans l'appli (heure, véhicule, évitements, pass). Le script ne modifie jamais la carte.
 // @author       DrSlump34
@@ -11,8 +11,8 @@
 // @license      MIT
 // @homepageURL  https://github.com/DrSlump34/WME-Route-Preview
 // @supportURL   https://github.com/DrSlump34/WME-Route-Preview/issues
-// @downloadURL  https://update.greasyfork.org/scripts/597359/WME%20Route%20Preview.user.js
-// @updateURL    https://update.greasyfork.org/scripts/597359/WME%20Route%20Preview.meta.js
+// @downloadURL  https://raw.githubusercontent.com/DrSlump34/WME-Route-Preview/master/WME-Route-Preview.user.js
+// @updateURL    https://raw.githubusercontent.com/DrSlump34/WME-Route-Preview/master/WME-Route-Preview.user.js
 // @match        https://www.waze.com/*/editor*
 // @match        https://www.waze.com/editor*
 // @match        https://beta.waze.com/*/editor*
@@ -24,7 +24,6 @@
 // @grant        unsafeWindow
 // @connect      waze.com
 // @connect      raw.githubusercontent.com
-// @connect      update.greasyfork.org
 // @run-at       document-idle
 // ==/UserScript==
 
@@ -148,6 +147,7 @@
             turnNoTip: 'The route does not take this turn: it may be disallowed or restricted, or the router prefers another path. Check the arrows in WME.',
             turnNoAlt: n => 'Route ' + n + ' takes it (choose it above).',
             pinTip: 'Keep this route as the reference: later computations between the same start and finish are compared with it',
+            legOf: d => 'leg ' + d,
             pinReplace: d => 'Replace the reference of ' + d + ' with this route', pinDone: 'Route kept as the reference.',
             refSame: d => 'Same as on ' + d,
             refDiff: (d, mod, nou, dis) => 'Since ' + d + ': ' + [mod ? mod + ' changed' : '', nou ? nou + ' new' : '', dis ? dis + ' gone' : ''].filter(x => x).join(', '),
@@ -232,6 +232,7 @@
             turnNoTip: 'Le trajet ne prend pas ce virage\u00a0: il est peut-être interdit ou restreint, ou le calcul préfère un autre chemin. Vérifiez les flèches dans WME.',
             turnNoAlt: n => 'L’itinéraire ' + n + ' le prend (choisissez-le ci-dessus).',
             pinTip: 'Garder ce trajet comme référence\u00a0: les calculs suivants entre les mêmes départ et arrivée lui sont comparés',
+            legOf: d => 'tronçon ' + d,
             pinReplace: d => 'Remplacer la référence du ' + d + ' par ce trajet', pinDone: 'Trajet gardé comme référence.',
             refSame: d => 'Identique au ' + d,
             refDiff: (d, mod, nou, dis) => 'Depuis le ' + d + '\u00a0: ' + [mod ? mod + ' modifiée' + (mod > 1 ? 's' : '') : '', nou ? nou + ' nouvelle' + (nou > 1 ? 's' : '') : '', dis ? dis + ' disparue' + (dis > 1 ? 's' : '') : ''].filter(x => x).join(', '),
@@ -1545,6 +1546,7 @@
 .wrp-l2 { font-size: 14px; font-weight: 300; color: #33ccff; }
 .wrp-cote { font-weight: 300; }
 .wrp-sh { width: auto; vertical-align: middle; }
+.wrp-tron { margin-left: 6px; font-size: 12px; font-weight: 400; opacity: .75; }
 .wrp-perso { color: #ffb74d; font-size: 11px; }
 .wrp-anns { display: flex; flex-wrap: wrap; align-items: center; gap: 3px; margin-top: 3px; font-size: 10px; color: #9aa5b1; }
 .wrp-ann { height: 18px; min-height: 0; padding: 0 7px; margin: 0; border: 1px solid #3c4043; border-radius: 50px; background: #202124;
@@ -1690,7 +1692,7 @@ button.wrp-drapeau:hover { background: #eef4fb; border-color: #2196f3; }
             '<div class="wrp-sec">&#x2753; ' + esc(t('sbHelp')) + '</div>' +
             aide.map((x, i) => '<div class="wrp-help-section"><button type="button" class="wrp-help-hdr' + (i ? '' : ' on') + '" data-aide="' + i + '" aria-expanded="' + !i + '">' +
                 esc(x.t) + ' <span>' + (i ? '&#x25B6;' : '&#x25BC;') + '</span></button><div class="wrp-help-body" data-corps="' + i + '"' + (i ? ' hidden' : '') + '>' + x.b + '</div></div>').join('') +
-            '<p class="wrp-sb-foot">&#x1F512; ' + esc(t('sbSafe')) + '<br>&#x1F517; <a href="' + URL_GF + '" target="_blank" rel="noopener">GreasyFork</a>' +
+            '<p class="wrp-sb-foot">&#x1F512; ' + esc(t('sbSafe')) + '<br>&#x1F517; <a href="' + URL_GH + '" target="_blank" rel="noopener">GitHub</a>' +
             ' &nbsp;&#xB7;&nbsp; <a href="' + URL_GH + '" target="_blank" rel="noopener">GitHub</a></p></div>';
     }
 
@@ -1731,10 +1733,10 @@ button.wrp-drapeau:hover { background: #eef4fb; border-color: #2196f3; }
     //  tourne ; hors ligne, réponse illisible ou page absente (le dépôt n'est pas encore publié) : elle
     //  reste éteinte. Un clic ouvre le fichier : le gestionnaire de scripts propose la mise à jour.
 
-    // Le gestionnaire de scripts connaît l'adresse de mise à jour (le .meta.js de GreasyFork, quelques centaines
-    // d'octets) et celle du script : l'en-tête les déclare depuis 0.14.03. Sans elles (copie collée à la main), on
-    // se rabat sur le fichier du dépôt GitHub.
-    const URL_GF = 'https://greasyfork.org/scripts/597359-wme-route-preview';
+    // Le gestionnaire de scripts connaît l'adresse de mise à jour et celle du script : l'en-tête les déclare. Depuis
+    // 0.15.04, c'est le fichier du dépôt GitHub — la fiche GreasyFork (597359) a été SUPPRIMÉE, et son adresse de mise
+    // à jour répondait 404 : les installations ne recevaient plus rien (constaté le 05/10/2026). Sans elles (copie
+    // collée à la main), on se rabat de même sur le dépôt.
     const URL_GH = 'https://github.com/DrSlump34/WME-Route-Preview';
     const URL_DEPOT = 'https://raw.githubusercontent.com/DrSlump34/WME-Route-Preview/master/WME-Route-Preview.user.js';
     const gmScript = () => (typeof GM_info !== 'undefined' && GM_info.script) || {};
@@ -2483,6 +2485,7 @@ button.wrp-drapeau:hover { background: #eef4fb; border-color: #2196f3; }
         return voies + '<div class="wrp-ligne">' +
             '<span class="wrp-fl" style="width:' + taille + 'px;height:' + taille + 'px"><span class="wrp-num">' + (i + 1) + '</span>' + icone(m, taille, '#ffffff', ANNEAU_SOMBRE) + '</span>' +
             '<span class="wrp-txt"><span class="wrp-l0"><b>' + esc(distAppli(dist == null ? m.troncon : dist)) + '</b>' +
+            (dist != null && distAppli(dist) !== distAppli(m.troncon) ? '<small class="wrp-tron">' + esc(t('legOf', distAppli(m.troncon))) + '</small>' : '') +
             (m.perso ? '<span class="wrp-perso" title="' + esc(t('custom')) + '">&#x270E;</span>' : '') + diff +
             '<span class="wrp-nb-sorties">' + L.sorties + '</span></span>' +
             (L.l1 ? '<span class="wrp-l1">' + L.l1 + '</span>' : '') +
@@ -2779,7 +2782,9 @@ button.wrp-drapeau:hover { background: #eef4fb; border-color: #2196f3; }
         const refs = lireRefs().filter(r => !memesPoints(r, pts.A, pts.B));
         refs.unshift({ t: Date.now(), A: pt(pts.A), B: pt(pts.B), o: optsCalcul(), metres: tr.metres, secondes: tr.secondes, via: tr.fiche.via, l: empreinte(tr) });
         ecrireStock(REFS_KEY, refs.slice(0, REFS_MAX));
+        const regardee = deplieeIdx;
         rendreTrajet();
+        if (regardee > 0 && trajet && trajet.manoeuvres[regardee]) montrer(regardee);
         majRefsOnglet();
         if (!silencieux) statutPassager(t('pinDone'));
     }
