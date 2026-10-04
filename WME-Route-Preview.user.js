@@ -3,7 +3,7 @@
 // @name:fr      WME Route Preview
 // @icon         data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHdpZHRoPSc2NCcgaGVpZ2h0PSc2NCcgdmlld0JveD0nMCAwIDY0IDY0Jz48ZGVmcz48bGluZWFyR3JhZGllbnQgaWQ9J2cnIHgxPScwJyB5MT0nMCcgeDI9JzAnIHkyPScxJz48c3RvcCBvZmZzZXQ9JzAnIHN0b3AtY29sb3I9JyMxZTliZjAnLz48c3RvcCBvZmZzZXQ9JzEnIHN0b3AtY29sb3I9JyMxNTY1YzAnLz48L2xpbmVhckdyYWRpZW50PjwvZGVmcz48cmVjdCB3aWR0aD0nNjQnIGhlaWdodD0nNjQnIHJ4PScxNCcgZmlsbD0ndXJsKCNnKScvPjxwYXRoIGQ9J00xNSA1NSBWMzQgUTE1IDI1IDI0IDI1IEgzMScgZmlsbD0nbm9uZScgc3Ryb2tlPScjZmZmJyBzdHJva2Utd2lkdGg9JzknIHN0cm9rZS1saW5lY2FwPSdyb3VuZCcgc3Ryb2tlLWxpbmVqb2luPSdyb3VuZCcvPjxwYXRoIGQ9J00yOSAxMyBMNDMgMjUgTDI5IDM3IFonIGZpbGw9JyNmZmYnIHN0cm9rZT0nI2ZmZicgc3Ryb2tlLXdpZHRoPSczJyBzdHJva2UtbGluZWpvaW49J3JvdW5kJy8+PHBhdGggZD0nTTM3IDQ3IEg0MiBMNTAgNDAgVjYwIEw0MiA1MyBIMzcgWicgZmlsbD0nI2ZiOGMwMCcgc3Ryb2tlPScjZmI4YzAwJyBzdHJva2Utd2lkdGg9JzEuNScgc3Ryb2tlLWxpbmVqb2luPSdyb3VuZCcvPjxwYXRoIGQ9J001NCA0NCBRNTcuNSA1MCA1NCA1NicgZmlsbD0nbm9uZScgc3Ryb2tlPScjZmI4YzAwJyBzdHJva2Utd2lkdGg9JzMnIHN0cm9rZS1saW5lY2FwPSdyb3VuZCcvPjwvc3ZnPgo=
 // @namespace    https://github.com/DrSlump34
-// @version      0.15.01
+// @version      0.15.03
 // @description  Preview a route in WME the way the Waze app gives it: set a start and a finish (segment, place, search or pointer), then read every instruction as in the app list — road shields, exit signs, lanes, roundabouts — and hear every voice prompt spoken by the real Waze voice, including the custom turn guidance set by editors. Route options as in the app (time, vehicle, avoidances, passes). The script never changes the map.
 // @description:fr Prévisualiser un trajet dans WME comme l'appli Waze le donne : posez un départ et une arrivée (segment, lieu, recherche ou pointeur), puis lisez chaque instruction comme dans la liste de l'appli — écussons, panneaux de sortie, voies, ronds-points — et écoutez chaque annonce dite par la vraie voix de Waze, y compris les instructions personnalisées posées par les éditeurs. Options du calcul comme dans l'appli (heure, véhicule, évitements, pass). Le script ne modifie jamais la carte.
 // @author       DrSlump34
@@ -497,11 +497,13 @@
             }).filter(x => x);
         };
         const vi = morceaux(rs.primaryMarkup);
-        const sec = morceaux(rs.secondaryMarkup).map(x => typeof x === 'object' ? x.signText : x).join(' ');
+        // La direction garde ses écussons (« [D528] Chevaigné ») : les aplatir en texte les faisait
+        // disparaître de la ligne « en direction de » (signalé par milkyway35, 28/09/2026).
+        const sec = morceaux(rs.secondaryMarkup);
         if (casse) return null;
         return {
             visualInstruction: vi,
-            towards: sec ? [sec] : [],
+            towards: sec.length ? [sec] : [],
             exitSigns: (Array.isArray(rs.exitSigns) ? rs.exitSigns : []).map(e => ({ id: e.type, description: e.text || '' })),
             tts: ttsWme || rs.textRepresentation || '',
             serveur: true,
@@ -947,7 +949,10 @@
         else if (m.op !== 'APPROACHING_DESTINATION' && m.ecussonSrv && !m.bretelle) l1 = bout(m.ecussonSrv);
         else if (m.op !== 'APPROACHING_DESTINATION' && ecussonRemplaceNom(m)) l1 = bout(m.ecusson);
         else if (m.op !== 'APPROACHING_DESTINATION') l1 = esc(m.rue || '');
-        let l2 = m.tg && Array.isArray(m.tg.towards) && m.tg.towards.length ? esc(m.tg.towards.join(', ')) : '';
+        // Chaque direction est un texte, un écusson, ou une suite des deux (panneau du serveur) :
+        // ses écussons se dessinent comme ceux de la ligne principale.
+        const dirs = m.tg && Array.isArray(m.tg.towards) ? m.tg.towards : [];
+        let l2 = dirs.map(d => (Array.isArray(d) ? d : [d]).filter(x => x).map(bout).join(' ')).filter(x => x).join(', ');
         // Écusson seul, sans texte : la ligne « en direction de » remonte à côté (règle officielle).
         if (vi.length && vi.every(x => typeof x === 'object') && l2) { l1 += ' <span class="wrp-cote">' + l2 + '</span>'; l2 = ''; }
         const sorties = m.tg && Array.isArray(m.tg.exitSigns) ? m.tg.exitSigns.map(x => imgEcusson(x, Math.round(h * 1.1), true)).join('') : '';
@@ -2977,7 +2982,17 @@ button.wrp-drapeau:hover { background: #eef4fb; border-color: #2196f3; }
         log('v' + VERSION + ' prêt — langue ' + _lang);
     };
 
-    if (pw.W?.userscripts?.state?.isReady) init();
-    else document.addEventListener('wme-ready', init, { once: true });
+    // Démarrage dès que le SDK est prêt, à TOUS les zooms (comme WNA et WZM) : « wme-ready » n'arrive qu'à un zoom
+    // éditable (≥ 12), et le script — son bouton de carte compris — restait absent tant qu'on regardait la carte de
+    // loin (demande de l'auteur, 04/10/2026). Garde : wme-initialized et wme-ready peuvent arriver tous les deux.
+    (() => {
+        let lance = false;
+        const go = () => { if (lance) return; lance = true; clearInterval(minuterie); Promise.resolve(pw.SDK_INITIALIZED).then(init); };
+        const pret = () => !!(pw.SDK_INITIALIZED || (pw.W && pw.W.userscripts && pw.W.userscripts.state && pw.W.userscripts.state.isReady));
+        const minuterie = setInterval(() => { if (pret()) go(); }, 300);
+        if (pret()) go();
+        document.addEventListener('wme-initialized', go, { once: true });
+        document.addEventListener('wme-ready', go, { once: true });
+    })();
 
 })();

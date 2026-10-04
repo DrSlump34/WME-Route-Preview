@@ -1,5 +1,13 @@
 # WME Route Preview — historique des versions
 
+## 0.15.03
+
+- Démarrage à tous les zooms : le script (bouton de carte, onglet) n'attendait que les zooms éditables de WME ; il démarre maintenant dès que le SDK est prêt, même la carte vue de loin.
+
+## 0.15.02
+
+- La ligne « en direction de » dessine ses écussons (« [D528] Chevaigné ») au lieu d'en écrire le seul numéro en texte (signalé par milkyway35). Une référence gardée avant cette version peut donc voir ces lignes « modifiée » au prochain calcul.
+
 ## 0.15.01
 
 - Lien à partager : lu une seule fois par onglet. WME remet les paramètres du lien dans l'adresse à chaque sélection : recharger la page relançait le calcul et réimposait les options du lien.

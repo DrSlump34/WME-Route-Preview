@@ -1,6 +1,10 @@
 // Toute fonction appelée dans le script doit y être déclarée.
 // node --check ne voit pas une fonction disparue : le script compile, puis meurt au
 // démarrage sur une ReferenceError, sans rien poser à l'écran.
+// Corrigé le 28/09/2026, repris de WME BAN Coverage (26/09) : un appel derrière un étalement
+// (...nom() ) était pris pour une méthode x.nom() et échappait au contrôle ; chaque nom signalé
+// porte maintenant sa ligne, juste (les sauts de ligne des commentaires /* */ et des gabarits
+// sont gardés). tools/temoins-idents.js prouve ces deux cas, à la bonne ligne.
 // Usage : node tools/check-idents.js [fichier]
 const fs = require('fs');
 const path = require('path');
@@ -17,7 +21,9 @@ function codeSeul(s) {
         const c = s[i], d = s[i + 1];
         if (etat === 'code') {
             if (c === '/' && d === '/') { while (i < s.length && s[i] !== '\n') i++; continue; }
-            if (c === '/' && d === '*') { i = s.indexOf('*/', i + 2); i = i < 0 ? s.length : i + 2; out += ' '; continue; }
+            // Les sauts de ligne sont GARDÉS (commentaires multilignes, texte des gabarits) : sans eux,
+            // les numéros de ligne signalés dériveraient (audit WBC du 26/09).
+            if (c === '/' && d === '*') { const j = s.indexOf('*/', i + 2), f = j < 0 ? s.length : j + 2; out += ' ' + s.slice(i, f).replace(/[^\n]/g, ''); i = f; continue; }
             if (c === "'" || c === '"') { const q = c; i++; while (i < s.length && s[i] !== q) i += s[i] === '\\' ? 2 : 1; i++; out += "''"; continue; }
             if (c === '`') { etat = 'gabarit'; i++; out += ' '; continue; }
             if (c === '{' && pile.length) pile[pile.length - 1]++;
@@ -31,6 +37,7 @@ function codeSeul(s) {
         if (c === '\\') { i += 2; continue; }
         if (c === '`') { etat = 'code'; i++; out += ' '; continue; }
         if (c === '$' && d === '{') { pile.push(0); etat = 'code'; i += 2; out += ' '; continue; }
+        if (c === '\n') out += '\n';
         i++;
     }
     return out;
@@ -48,10 +55,13 @@ for (const m of src.matchAll(/([A-Za-z_$][\w$]*)\s*=>/g)) declares.add(m[1]);
 const natifs = new Set(['if', 'for', 'while', 'switch', 'catch', 'return', 'function', 'typeof', 'setTimeout', 'clearTimeout', 'setInterval', 'clearInterval', 'Date', 'fetch',
     'requestAnimationFrame', 'parseInt', 'parseFloat', 'String', 'Number', 'Boolean', 'Object', 'Array', 'JSON', 'Math',
     'Map', 'Set', 'Promise', 'Audio', 'GM_xmlhttpRequest', 'MutationObserver', 'Error', 'isNaN', 'encodeURIComponent', 'await', 'async', 'URL', 'URLSearchParams']);
-const absents = new Set();
-for (const m of src.matchAll(/(^|[^.\w$])([a-zA-Z_$][\w$]*)\s*\(/g)) {
+const absents = new Map();        // nom -> ligne du premier appel
+// Un nom précédé d'un point est une méthode (x.nom(), x?.nom()) — mais PAS derrière l'étalement
+// ...nom(), qui appelle une fonction : le prendre pour une méthode laissait passer
+// [...fonctionDisparue(x)] (vu le 26/09 en mutant WBC).
+for (const m of src.matchAll(/(^|[^.\w$]|\.\.\.)([a-zA-Z_$][\w$]*)\s*\(/g)) {
     const n = m[2];
-    if (!declares.has(n) && !natifs.has(n)) absents.add(n);
+    if (!declares.has(n) && !natifs.has(n) && !absents.has(n)) absents.set(n, src.slice(0, m.index + m[1].length).split('\n').length);
 }
-if (absents.size) { console.error('APPELÉES MAIS NON DÉCLARÉES : ' + [...absents].join(', ')); process.exit(1); }
+if (absents.size) { console.error('APPELÉES MAIS NON DÉCLARÉES : ' + [...absents].map(([n, l]) => n + ' (~l. ' + l + ')').join(', ')); process.exit(1); }
 console.log('OK — ' + declares.size + ' déclarations, aucun appel orphelin');

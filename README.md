@@ -6,7 +6,7 @@ Voir, dans WME, un trajet **tel que l'appli Waze le donnera au conducteur** : ch
 
 C'est l'outil pour vérifier ce qu'on vient de poser (une instruction de virage, un panneau, des voies) sans prendre la voiture.
 
-![La fenêtre de WRP sur un trajet Bollène → A7 : quatre itinéraires proposés, la référence identique, la sortie 18 dépliée avec ses voies, son panneau, ses annonces et le bouton de sélection du segment](capture_0.15.01_fenetre.jpg)
+![La fenêtre de WRP sur un trajet Bollène → A7 : quatre itinéraires proposés, la référence identique, la sortie 18 dépliée avec ses voies, son panneau, ses annonces et le bouton de sélection du segment](capture_0.15.03_fenetre.jpg)
 
 ## Poser le départ et l'arrivée
 
@@ -36,7 +36,7 @@ Le calcul part dès que les deux sont posés. La fenêtre s'ouvre par le bouton 
 
 Conduite à gauche prise en compte (ronds-points et demi-tours en miroir).
 
-<img src="capture_0.15.01_onglet.jpg" width="256" alt="L'onglet Scripts : réglages, références et aide">
+<img src="capture_0.15.03_onglet.jpg" width="256" alt="L'onglet Scripts : réglages, références et aide">
 
 ## Ce qu'il faut savoir
 
@@ -53,4 +53,4 @@ Aucune modification de la carte : aucune action n'entre dans la pile d'annulatio
 
 Depuis GreasyFork (Tampermonkey ou Violentmonkey) : les mises à jour arrivent ensuite toutes seules. Retours et idées : [Issues](https://github.com/DrSlump34/WME-Route-Preview/issues). Historique des versions : [HISTORIQUE.md](HISTORIQUE.md). Licence MIT.
 
-Pour les contributeurs : `node tools/check-idents.js WME-Route-Preview.user.js` (toute fonction appelée est déclarée), `node tools/rejouer-bancs.js` (rejoue les trajets enregistrés de `bancs/` sur le script et compare à `bancs/attendu/`) et `node tools/banc-nouveautes.js` (itinéraires, comparaison à une référence, virage testé).
+Pour les contributeurs : `node tools/check-idents.js WME-Route-Preview.user.js` (toute fonction appelée est déclarée), `node tools/rejouer-bancs.js` (rejoue les trajets enregistrés de `bancs/` sur le script et compare à `bancs/attendu/`) `node tools/banc-nouveautes.js` (itinéraires, comparaison à une référence, virage testé) et `node tools/banc-direction-ecusson.js` (écussons de la ligne « en direction de »).
