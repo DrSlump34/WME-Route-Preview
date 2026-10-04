@@ -1734,9 +1734,9 @@ button.wrp-drapeau:hover { background: #eef4fb; border-color: #2196f3; }
     //  reste éteinte. Un clic ouvre le fichier : le gestionnaire de scripts propose la mise à jour.
 
     // Le gestionnaire de scripts connaît l'adresse de mise à jour et celle du script : l'en-tête les déclare. Depuis
-    // 0.15.04, c'est le fichier du dépôt GitHub — la fiche GreasyFork (597359) a été SUPPRIMÉE, et son adresse de mise
-    // à jour répondait 404 : les installations ne recevaient plus rien (constaté le 05/10/2026). Sans elles (copie
-    // collée à la main), on se rabat de même sur le dépôt.
+    // 0.15.04, c'est le fichier du dépôt GitHub : la fiche GreasyFork (597359), un temps supprimée, répondait 404 et
+    // les installations ne recevaient plus rien (05/10/2026). Rétablie (non répertoriée), elle réécrit ces deux lignes
+    // pour les installations faites chez elle. Sans elles (copie collée à la main), on se rabat sur le dépôt.
     const URL_GH = 'https://github.com/DrSlump34/WME-Route-Preview';
     const URL_DEPOT = 'https://raw.githubusercontent.com/DrSlump34/WME-Route-Preview/master/WME-Route-Preview.user.js';
     const gmScript = () => (typeof GM_info !== 'undefined' && GM_info.script) || {};
