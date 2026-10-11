@@ -52,7 +52,7 @@ const params = liste => liste.split(',').map(x => x.trim().replace(/=.*$/, '').r
 for (const m of src.matchAll(/\bfunction\s*[\w$]*\s*\(([^)]*)\)/g)) params(m[1]).forEach(x => declares.add(x));
 for (const m of src.matchAll(/\(([^()]*)\)\s*=>/g)) params(m[1]).forEach(x => declares.add(x));
 for (const m of src.matchAll(/([A-Za-z_$][\w$]*)\s*=>/g)) declares.add(m[1]);
-const natifs = new Set(['if', 'for', 'while', 'switch', 'catch', 'return', 'function', 'typeof', 'setTimeout', 'clearTimeout', 'setInterval', 'clearInterval', 'Date', 'fetch',
+const natifs = new Set(['TextEncoder', 'Uint8Array', 'if', 'for', 'while', 'switch', 'catch', 'return', 'function', 'typeof', 'setTimeout', 'clearTimeout', 'setInterval', 'clearInterval', 'Date', 'fetch',
     'requestAnimationFrame', 'parseInt', 'parseFloat', 'String', 'Number', 'Boolean', 'Object', 'Array', 'JSON', 'Math',
     'Map', 'Set', 'Promise', 'Audio', 'GM_xmlhttpRequest', 'MutationObserver', 'Error', 'isNaN', 'encodeURIComponent', 'await', 'async', 'URL', 'URLSearchParams']);
 const absents = new Map();        // nom -> ligne du premier appel
