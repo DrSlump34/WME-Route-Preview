@@ -3,7 +3,7 @@
 // @name:fr      WME Route Preview
 // @icon         data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHdpZHRoPSc2NCcgaGVpZ2h0PSc2NCcgdmlld0JveD0nMCAwIDY0IDY0Jz48ZGVmcz48bGluZWFyR3JhZGllbnQgaWQ9J2cnIHgxPScwJyB5MT0nMCcgeDI9JzAnIHkyPScxJz48c3RvcCBvZmZzZXQ9JzAnIHN0b3AtY29sb3I9JyMxZTliZjAnLz48c3RvcCBvZmZzZXQ9JzEnIHN0b3AtY29sb3I9JyMxNTY1YzAnLz48L2xpbmVhckdyYWRpZW50PjwvZGVmcz48cmVjdCB3aWR0aD0nNjQnIGhlaWdodD0nNjQnIHJ4PScxNCcgZmlsbD0ndXJsKCNnKScvPjxwYXRoIGQ9J00xNSA1NSBWMzQgUTE1IDI1IDI0IDI1IEgzMScgZmlsbD0nbm9uZScgc3Ryb2tlPScjZmZmJyBzdHJva2Utd2lkdGg9JzknIHN0cm9rZS1saW5lY2FwPSdyb3VuZCcgc3Ryb2tlLWxpbmVqb2luPSdyb3VuZCcvPjxwYXRoIGQ9J00yOSAxMyBMNDMgMjUgTDI5IDM3IFonIGZpbGw9JyNmZmYnIHN0cm9rZT0nI2ZmZicgc3Ryb2tlLXdpZHRoPSczJyBzdHJva2UtbGluZWpvaW49J3JvdW5kJy8+PHBhdGggZD0nTTM3IDQ3IEg0MiBMNTAgNDAgVjYwIEw0MiA1MyBIMzcgWicgZmlsbD0nI2ZiOGMwMCcgc3Ryb2tlPScjZmI4YzAwJyBzdHJva2Utd2lkdGg9JzEuNScgc3Ryb2tlLWxpbmVqb2luPSdyb3VuZCcvPjxwYXRoIGQ9J001NCA0NCBRNTcuNSA1MCA1NCA1NicgZmlsbD0nbm9uZScgc3Ryb2tlPScjZmI4YzAwJyBzdHJva2Utd2lkdGg9JzMnIHN0cm9rZS1saW5lY2FwPSdyb3VuZCcvPjwvc3ZnPgo=
 // @namespace    https://github.com/DrSlump34
-// @version      0.15.05
+// @version      0.15.06
 // @description  Preview a route in WME the way the Waze app gives it: set a start and a finish (segment, place, search or pointer), then read every instruction as in the app list — road shields, exit signs, lanes, roundabouts — and hear every voice prompt spoken by the real Waze voice, including the custom turn guidance set by editors. Route options as in the app (time, vehicle, avoidances, passes). The script never changes the map.
 // @description:fr Prévisualiser un trajet dans WME comme l'appli Waze le donne : posez un départ et une arrivée (segment, lieu, recherche ou pointeur), puis lisez chaque instruction comme dans la liste de l'appli — écussons, panneaux de sortie, voies, ronds-points — et écoutez chaque annonce dite par la vraie voix de Waze, y compris les instructions personnalisées posées par les éditeurs. Options du calcul comme dans l'appli (heure, véhicule, évitements, pass). Le script ne modifie jamais la carte.
 // @author       DrSlump34
@@ -2947,7 +2947,68 @@ button.wrp-drapeau:hover { background: #eef4fb; border-color: #2196f3; }
     //  INIT
     // =====================================================================
 
+    // ─── VERSION MINIMALE (consigne de l'auteur, 11/10/2026) ────────────────────────────────────
+    // Une version dont une faille a été corrigée est RETIRÉE : l'auteur relève `min` dans version-min.json,
+    // à la racine du dépôt GitHub, et toute version plus ancienne refuse de démarrer — elle affiche un
+    // bandeau qui demande la mise à jour, et rien d'autre. Fichier injoignable ou illisible : le script
+    // démarre (une panne de GitHub ne doit pas paralyser les éditeurs ; décision de l'auteur, même jour).
+    // ⚠️ Le contrôle ne protège qu'à partir des versions qui le contiennent, et il tourne dans le
+    // navigateur : il arrête l'éditeur qui n'a pas mis à jour, pas celui qui retire ces lignes.
+    const _VM_URL = 'https://raw.githubusercontent.com/DrSlump34/WME-Route-Preview/master/version-min.json';
+    const _VM_MAJ = 'https://raw.githubusercontent.com/DrSlump34/WME-Route-Preview/master/WME-Route-Preview.user.js';
+    const _vmCmp = (a, b) => {
+        const x = String(a).split('.').map(Number), y = String(b).split('.').map(Number);
+        for (let i = 0; i < Math.max(x.length, y.length); i++) { const d = (x[i] || 0) - (y[i] || 0); if (d) return d < 0 ? -1 : 1; }
+        return 0;
+    };
+    const _vmLire = () => new Promise(res => {
+        setTimeout(() => res(null), 7000);   // gestionnaire de scripts qui ne rappelle jamais : on démarre
+        const v = String(VERSION), num = /^\d+(\.\d+)*$/;
+        if (!num.test(v)) { res(null); return; }      // version locale illisible (copie de travail) : on ne bloque rien
+        try {
+            GM_xmlhttpRequest({ method: 'GET', url: _VM_URL + '?t=' + Date.now(), timeout: 6000,
+                onload: r => {
+                    try {
+                        const j = r.status === 200 ? JSON.parse(r.responseText) : null;
+                        res(j && typeof j.min === 'string' && num.test(j.min) && _vmCmp(v, j.min) < 0 ? j : null);
+                    } catch (e) { res(null); }
+                },
+                onerror: () => res(null), ontimeout: () => res(null) });
+        } catch (e) { res(null); }
+    });
+    const _vmBandeau = j => {
+        if (document.getElementById('vm-' + _VM_URL.length + '-' + String(SCRIPT_NAME).length)) return;
+        const l = ((location.pathname.match(/^\/([a-z]{2})(-[A-Za-z]{2})?\//) || [])[1] || (navigator.language || 'en').slice(0, 2)).toLowerCase();
+        const n = String(SCRIPT_NAME), v = String(VERSION), m = j.min;
+        const T = {
+            fr: [`${n} v${v} est retirée : une version corrigée est publiée (v${m} ou plus récente). Le script ne démarre pas tant qu’il n’est pas mis à jour (Tampermonkey ▸ Rechercher des mises à jour).`, 'Mettre à jour'],
+            en: [`${n} v${v} has been withdrawn: a fixed version is published (v${m} or later). The script will not start until it is updated (Tampermonkey ▸ Check for updates).`, 'Update'],
+            it: [`${n} v${v} è stata ritirata: è pubblicata una versione corretta (v${m} o successiva). Lo script non si avvia finché non viene aggiornato (Tampermonkey ▸ Cerca aggiornamenti).`, 'Aggiorna'],
+            de: [`${n} v${v} wurde zurückgezogen: eine korrigierte Version ist veröffentlicht (v${m} oder neuer). Das Skript startet erst nach dem Update (Tampermonkey ▸ Nach Updates suchen).`, 'Aktualisieren'],
+            es: [`${n} v${v} ha sido retirada: hay una versión corregida publicada (v${m} o posterior). El script no se inicia hasta que se actualice (Tampermonkey ▸ Buscar actualizaciones).`, 'Actualizar'],
+            pt: [`${n} v${v} foi retirada: há uma versão corrigida publicada (v${m} ou mais recente). O script não arranca enquanto não for atualizado (Tampermonkey ▸ Procurar atualizações).`, 'Atualizar'],
+            he: [`${n} v${v} הוסרה: פורסמה גרסה מתוקנת (v${m} ומעלה). הסקריפט לא יופעל עד שיעודכן (Tampermonkey ▸ חיפוש עדכונים).`, 'עדכון'],
+        };
+        const [txt, btn] = T[l] || T.en;
+        const d = document.createElement('div');
+        d.id = 'vm-' + _VM_URL.length + '-' + n.length;
+        d.dir = l === 'he' ? 'rtl' : 'ltr';
+        d.setAttribute('role', 'alert');
+        d.style.cssText = 'position:fixed;top:56px;left:50%;transform:translateX(-50%);z-index:100000;max-width:560px;padding:10px 14px;' +
+            'background:#ffebee;color:#b71c1c;border:1px solid #c62828;border-radius:8px;font:600 12px/1.5 Rubik,Arial,sans-serif;box-shadow:0 2px 8px rgba(0,0,0,.25)';
+        const p = document.createElement('div'); p.textContent = txt; d.appendChild(p);
+        const a = document.createElement('a'); a.href = _VM_MAJ; a.target = '_blank'; a.rel = 'noopener'; a.textContent = btn + ' ↗';
+        a.style.cssText = 'display:inline-block;margin-top:6px;padding:3px 10px;border-radius:50px;background:#c62828;color:#fff;text-decoration:none';
+        const x = document.createElement('button'); x.type = 'button'; x.textContent = '×'; x.setAttribute('aria-label', 'OK');
+        x.style.cssText = 'position:absolute;top:2px;inset-inline-end:6px;border:0;background:none;color:#b71c1c;font-size:16px;cursor:pointer';
+        x.onclick = () => d.remove();
+        d.appendChild(a); d.appendChild(x);
+        (document.body || document.documentElement).appendChild(d);
+    };
+    // Vrai si cette version est retirée : le bandeau est posé, et l'appelant ne démarre pas.
+    const _vmBloque = async () => { const j = await _vmLire(); if (j) { _vmBandeau(j); return true; } return false; };
     const init = async () => {
+        if (await _vmBloque()) return;   // version retirée : bandeau, rien d’autre
         if (pw.__WRP_LOADED) return;
         pw.__WRP_LOADED = true;
 
