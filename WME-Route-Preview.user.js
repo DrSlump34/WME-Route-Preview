@@ -3,7 +3,7 @@
 // @name:fr      WME Route Preview
 // @icon         data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHdpZHRoPSc2NCcgaGVpZ2h0PSc2NCcgdmlld0JveD0nMCAwIDY0IDY0Jz48ZGVmcz48bGluZWFyR3JhZGllbnQgaWQ9J2cnIHgxPScwJyB5MT0nMCcgeDI9JzAnIHkyPScxJz48c3RvcCBvZmZzZXQ9JzAnIHN0b3AtY29sb3I9JyMxZTliZjAnLz48c3RvcCBvZmZzZXQ9JzEnIHN0b3AtY29sb3I9JyMxNTY1YzAnLz48L2xpbmVhckdyYWRpZW50PjwvZGVmcz48cmVjdCB3aWR0aD0nNjQnIGhlaWdodD0nNjQnIHJ4PScxNCcgZmlsbD0ndXJsKCNnKScvPjxwYXRoIGQ9J00xNSA1NSBWMzQgUTE1IDI1IDI0IDI1IEgzMScgZmlsbD0nbm9uZScgc3Ryb2tlPScjZmZmJyBzdHJva2Utd2lkdGg9JzknIHN0cm9rZS1saW5lY2FwPSdyb3VuZCcgc3Ryb2tlLWxpbmVqb2luPSdyb3VuZCcvPjxwYXRoIGQ9J00yOSAxMyBMNDMgMjUgTDI5IDM3IFonIGZpbGw9JyNmZmYnIHN0cm9rZT0nI2ZmZicgc3Ryb2tlLXdpZHRoPSczJyBzdHJva2UtbGluZWpvaW49J3JvdW5kJy8+PHBhdGggZD0nTTM3IDQ3IEg0MiBMNTAgNDAgVjYwIEw0MiA1MyBIMzcgWicgZmlsbD0nI2ZiOGMwMCcgc3Ryb2tlPScjZmI4YzAwJyBzdHJva2Utd2lkdGg9JzEuNScgc3Ryb2tlLWxpbmVqb2luPSdyb3VuZCcvPjxwYXRoIGQ9J001NCA0NCBRNTcuNSA1MCA1NCA1NicgZmlsbD0nbm9uZScgc3Ryb2tlPScjZmI4YzAwJyBzdHJva2Utd2lkdGg9JzMnIHN0cm9rZS1saW5lY2FwPSdyb3VuZCcvPjwvc3ZnPgo=
 // @namespace    https://github.com/DrSlump34
-// @version      0.15.10
+// @version      0.15.11
 // @description  Preview a route in WME the way the Waze app gives it: set a start and a finish (segment, place, search or pointer), then read every instruction as in the app list — road shields, exit signs, lanes, roundabouts — and hear every voice prompt spoken by the real Waze voice, including the custom turn guidance set by editors. Route options as in the app (time, vehicle, avoidances, passes). The script never changes the map.
 // @description:fr Prévisualiser un trajet dans WME comme l'appli Waze le donne : posez un départ et une arrivée (segment, lieu, recherche ou pointeur), puis lisez chaque instruction comme dans la liste de l'appli — écussons, panneaux de sortie, voies, ronds-points — et écoutez chaque annonce dite par la vraie voix de Waze, y compris les instructions personnalisées posées par les éditeurs. Options du calcul comme dans l'appli (heure, véhicule, évitements, pass). Le script ne modifie jamais la carte.
 // @author       DrSlump34
@@ -1562,6 +1562,14 @@
 .wrp-nb-puis span { display: flex; align-items: center; gap: 4px; white-space: nowrap; overflow: hidden; }
 
 /* Onglet Scripts : réglages seulement. */
+/* WME Studio, thème sombre : ses variables, toujours avec un repli. Sans Studio, ou en thème clair, ces règles ne s'appliquent pas. */
+html:is([data-wme-studio-theme="dark"],[data-wme-studio-theme="black"]) #wrp-pane { color: var(--wme-studio-text, #e8eaed); }
+html:is([data-wme-studio-theme="dark"],[data-wme-studio-theme="black"]) #wrp-pane :is(p,td,th,li,label,b,strong,bdi,dd,dt):not([class]) { color: inherit; }
+html:is([data-wme-studio-theme="dark"],[data-wme-studio-theme="black"]) #wrp-pane :is([class*="hint"],[class*="note"],[class*="-ver"],[class*="foot"],[class*="links"],[class*="meta"],[class*="-lbl"]) { color: var(--wme-studio-text-secondary, #b6c0ca); }
+html:is([data-wme-studio-theme="dark"],[data-wme-studio-theme="black"]) #wrp-pane :is(h2,[class*="-sec"]:not(button),[class*="sb-on"]) { color: #64b5f6; }
+html:is([data-wme-studio-theme="dark"],[data-wme-studio-theme="black"]) #wrp-pane :is([class*="btn-neutral"],[class*="btn-sec"],[class*="chip"],[class*="help-hdr"],[class*="aide-h"],[class*="hist-row"],kbd,select,input:not([type=checkbox]):not([type=radio])) { background: var(--wme-studio-input, #3a3f44); color: var(--wme-studio-text, #e8eaed); border-color: var(--wme-studio-border, #4a5056); }
+html:is([data-wme-studio-theme="dark"],[data-wme-studio-theme="black"]) #wrp-pane :is([class*="help-hdr"],[class*="aide-h"]).on { background: var(--wme-studio-hover, #454b52); color: var(--wme-studio-text, #e8eaed); }
+html:is([data-wme-studio-theme="dark"],[data-wme-studio-theme="black"]) #wrp-pane :is([class*="help-body"],[class*="aide-c"]) { color: var(--wme-studio-text, #e8eaed); }
 #wrp-pane { padding: 10px 12px; font-family: 'Rubik','Open Sans',sans-serif; font-size: 12px; color: #2d3748; }
 #wrp-pane h2 { font-size: 13px; font-weight: 700; color: #2196f3; margin: 0 0 8px; }
 #wrp-pane h2 span { font-size: 11px; font-weight: 400; color: #9e9e9e; }
@@ -2101,18 +2109,30 @@ button.wrp-drapeau:hover { background: #eef4fb; border-color: #2196f3; }
     // Les bornes de la carte, MESURÉES à chaque geste (repris de WPEU) : jamais sur le volet gauche
     // de WME, jamais sur le pied de page, et jamais sur la colonne de boutons de droite — ni en
     // déplaçant la fenêtre, ni en l'agrandissant : c'est là que vit le bouton qui la rouvre.
+    // WME Studio, mode flottant : l'en-tête n'est plus une barre au-dessus de la carte, c'est un îlot posé
+    // dessus, que l'éditeur peut déplacer. On le mesure pour que la fenêtre ne le recouvre pas (bouton
+    // « Enregistrer » compris). Sans Studio, ou en mode Standard, les bornes ne changent pas.
+    function sousEnteteStudio(z) {
+        if (document.documentElement.dataset.wmeStudioCompact !== 'on') return z;
+        const t = document.getElementById('app-head');
+        const r = t && t.getBoundingClientRect();
+        if (!r || !r.width || !r.height || r.right <= z.gauche || r.left >= z.droite) return z;
+        if (r.top + r.height / 2 < window.innerHeight / 2) z.haut = Math.max(z.haut, Math.round(r.bottom) + 6);
+        else z.bas = Math.min(z.bas, Math.round(r.top) - 6);
+        return z;
+    }
     function bornesCarte() {
         const carte = document.getElementById('WazeMap') || document.querySelector('.olMapViewport');
         const pied = document.querySelector('.wz-map-ol-footer');
         const btns = document.querySelector('.overlay-buttons-container.top') || document.querySelector('.overlay-buttons-container');
         const r = carte ? carte.getBoundingClientRect() : { left: 0, top: 40, right: window.innerWidth, bottom: window.innerHeight };
         const rb = btns ? btns.getBoundingClientRect() : null;
-        return {
+        return sousEnteteStudio({
             gauche: Math.round(r.left) + 6,
             haut: Math.round(r.top) + 6,
             droite: Math.round(rb && rb.width ? rb.left - 8 : r.right - 8),
             bas: Math.round(pied ? pied.getBoundingClientRect().top - 6 : r.bottom - 6),
-        };
+        });
     }
 
     // Ramène une géométrie dans les bornes. Le plancher (300 × 220) protège d'une fenêtre réduite à

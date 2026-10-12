@@ -6,7 +6,7 @@ Voir, dans WME, un trajet **tel que l'appli Waze le donnera au conducteur** : ch
 
 C'est l'outil pour vérifier ce qu'on vient de poser (une instruction de virage, un panneau, des voies) sans prendre la voiture.
 
-![La fenêtre de WRP sur un trajet Bollène → A7 : quatre itinéraires proposés, la référence identique, la sortie 18 dépliée avec ses voies, son panneau, ses annonces et le bouton de sélection du segment](capture_0.15.03_fenetre.jpg)
+![La fenêtre de WRP sur un trajet Bollène → A7 : quatre itinéraires proposés, la référence identique, la sortie 18 dépliée avec ses voies, son panneau, ses annonces et le bouton de sélection du segment](capture_0.15.11_fenetre.jpg)
 
 ## Poser le départ et l'arrivée
 
@@ -36,7 +36,7 @@ Le calcul part dès que les deux sont posés. La fenêtre s'ouvre par le bouton 
 
 Conduite à gauche prise en compte (ronds-points et demi-tours en miroir).
 
-<img src="capture_0.15.03_onglet.jpg" width="256" alt="L'onglet Scripts : réglages, références et aide">
+<img src="capture_0.15.11_onglet.jpg" width="256" alt="L'onglet Scripts : réglages, références et aide">
 
 ## Ce qu'il faut savoir
 
