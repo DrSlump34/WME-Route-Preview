@@ -1,7 +1,7 @@
 {
-  "min": "0.15.10",
+  "min": "0.15.11",
   "empreintes": {
-    "0.15.10": "3c6e9d2eb6b7bc9a60807b37ffefd2a459c14e1786d676048a5bd0bbf79d891f"
+    "0.15.11": "31f63c763bc992f8a6c30ab46e099e17607ac201b764e229e33d70b3601fcc03"
   },
   "_lisezmoi": "Version minimale autorisée et empreinte SHA-256 du code de chaque version publiée (texte de l’enveloppe _wmeIntegre, fins de ligne LF). Une version plus ancienne, une copie modifiée ou une version absente ne démarre pas."
 }
