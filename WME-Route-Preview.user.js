@@ -3,7 +3,7 @@
 // @name:fr      WME Route Preview
 // @icon         data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHdpZHRoPSc2NCcgaGVpZ2h0PSc2NCcgdmlld0JveD0nMCAwIDY0IDY0Jz48ZGVmcz48bGluZWFyR3JhZGllbnQgaWQ9J2cnIHgxPScwJyB5MT0nMCcgeDI9JzAnIHkyPScxJz48c3RvcCBvZmZzZXQ9JzAnIHN0b3AtY29sb3I9JyMxZTliZjAnLz48c3RvcCBvZmZzZXQ9JzEnIHN0b3AtY29sb3I9JyMxNTY1YzAnLz48L2xpbmVhckdyYWRpZW50PjwvZGVmcz48cmVjdCB3aWR0aD0nNjQnIGhlaWdodD0nNjQnIHJ4PScxNCcgZmlsbD0ndXJsKCNnKScvPjxwYXRoIGQ9J00xNSA1NSBWMzQgUTE1IDI1IDI0IDI1IEgzMScgZmlsbD0nbm9uZScgc3Ryb2tlPScjZmZmJyBzdHJva2Utd2lkdGg9JzknIHN0cm9rZS1saW5lY2FwPSdyb3VuZCcgc3Ryb2tlLWxpbmVqb2luPSdyb3VuZCcvPjxwYXRoIGQ9J00yOSAxMyBMNDMgMjUgTDI5IDM3IFonIGZpbGw9JyNmZmYnIHN0cm9rZT0nI2ZmZicgc3Ryb2tlLXdpZHRoPSczJyBzdHJva2UtbGluZWpvaW49J3JvdW5kJy8+PHBhdGggZD0nTTM3IDQ3IEg0MiBMNTAgNDAgVjYwIEw0MiA1MyBIMzcgWicgZmlsbD0nI2ZiOGMwMCcgc3Ryb2tlPScjZmI4YzAwJyBzdHJva2Utd2lkdGg9JzEuNScgc3Ryb2tlLWxpbmVqb2luPSdyb3VuZCcvPjxwYXRoIGQ9J001NCA0NCBRNTcuNSA1MCA1NCA1NicgZmlsbD0nbm9uZScgc3Ryb2tlPScjZmI4YzAwJyBzdHJva2Utd2lkdGg9JzMnIHN0cm9rZS1saW5lY2FwPSdyb3VuZCcvPjwvc3ZnPgo=
 // @namespace    https://github.com/DrSlump34
-// @version      0.15.11
+// @version      0.15.12
 // @description  Preview a route in WME the way the Waze app gives it: set a start and a finish (segment, place, search or pointer), then read every instruction as in the app list — road shields, exit signs, lanes, roundabouts — and hear every voice prompt spoken by the real Waze voice, including the custom turn guidance set by editors. Route options as in the app (time, vehicle, avoidances, passes). The script never changes the map.
 // @description:fr Prévisualiser un trajet dans WME comme l'appli Waze le donne : posez un départ et une arrivée (segment, lieu, recherche ou pointeur), puis lisez chaque instruction comme dans la liste de l'appli — écussons, panneaux de sortie, voies, ronds-points — et écoutez chaque annonce dite par la vraie voix de Waze, y compris les instructions personnalisées posées par les éditeurs. Options du calcul comme dans l'appli (heure, véhicule, évitements, pass). Le script ne modifie jamais la carte.
 // @author       DrSlump34
@@ -2038,6 +2038,23 @@ button.wrp-drapeau:hover { background: #eef4fb; border-color: #2196f3; }
             '<div id="wrp-corps"></div><div id="wrp-resize"></div>';
     }
 
+    // Les éléments flottants vivent dans une COUCHE posée dans la zone de carte de WME (.edit-area-main, niveau 1),
+    // pas sur <body> : à 9989 sur la page, la fenêtre recouvrait le panneau « Calques » de WME, empilé au niveau 2
+    // de cette zone (mesuré le 15/10/2026 ; aucun z-index posé sur <body> ne passe dessous sans passer sous la
+    // carte). La couche est de taille nulle : elle ne prend aucun clic, et ses enfants gardent leurs z-index entre
+    // eux. Sans cette zone (WME changé), repli sur <body>. Même règle que WBC 0.16.08.
+    function coucheScript() {
+        const zone = document.querySelector('div.edit-area-main');
+        if (!zone) return document.body;
+        let c = document.getElementById('wrp-couche');
+        if (!c) {
+            c = document.createElement('div');
+            c.id = 'wrp-couche';
+            c.style.cssText = 'position:absolute;top:0;left:0;width:0;height:0;z-index:1';
+        }
+        if (c.parentElement !== zone) zone.appendChild(c);
+        return c;
+    }
     function construireFenetre() {
         ovEl = document.createElement('div');
         ovEl.id = 'wrp-ov';
@@ -2046,7 +2063,7 @@ button.wrp-drapeau:hover { background: #eef4fb; border-color: #2196f3; }
         ovEl.setAttribute('role', 'dialog');
         ovEl.setAttribute('aria-label', SCRIPT_NAME);
         ovEl.innerHTML = htmlFenetre();
-        document.body.appendChild(ovEl);
+        coucheScript().appendChild(ovEl);
         ovEl.addEventListener('click', surClicFenetre);
         // Une ligne de la liste s'ouvre aussi au clavier : Entrée ou Espace sur la ligne elle-même (audit G3).
         ovEl.addEventListener('keydown', ev => {
@@ -2081,6 +2098,8 @@ button.wrp-drapeau:hover { background: #eef4fb; border-color: #2196f3; }
         if (!ovEl) return;
         const deja = ovEl.classList.contains('open');
         ovEl.classList.add('open');
+        // La zone de carte a pu être reconstruite par WME : la fenêtre retourne dans sa couche.
+        { const c = coucheScript(); if (ovEl.parentElement !== c) c.appendChild(ovEl); }
         if (!deja) placerFenetre(lireStock(GEOM_KEY, null));
         majFab();
         masqueParFermeture = false;
